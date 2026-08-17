@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "wyck-psych.github.io"
+  title: "Winson Y. Chen"
   navbar:
     left:
       - href: index.qmd

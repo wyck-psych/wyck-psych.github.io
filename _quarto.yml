@@ -9,7 +9,6 @@ website:
       - href: index.qmd
         text: Home
       - Psychometrics_Portfolio.qmd
-        text: Psychometrics Portfolio
 format:
   html:
     theme: minty

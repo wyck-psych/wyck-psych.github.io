@@ -12,9 +12,7 @@ website:
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
+    theme: minty
     css: styles.css
     toc: true
 

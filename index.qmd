@@ -1,13 +1,39 @@
 ---
-title: "wyck-psych.github.io"
+title: "Winson Y. Chen"
+image: mountain_photo.jpg
+about: 
+  id: hero-heading
+  template: trestles
+  image-shape: rounded
+  links: 
+    - text: CV
+      icon: file-person
+    
+    - text: Email
+      icon: envelope
+      href: mailto:winsonychen@gmail.com
+    - text: Github
+      icon: github
+      href: https://github.com/wyck-psych
 ---
 
-This is a Quarto website.
+:::{#hero-heading}
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+I am a Ph.D. student at The University of Southern Mississippi in the Research, Evaluation, Statistics, and Assessment (RESA) program. I am broadly interested in the intersection of psychometrics, education, and the philosophy of science. I believe that valid measurement is essential for responsible scientific and industrial progress, and I am committed to applying statistical and methodological expertise to improve measurement efforts across education, business, and medicine. 
 
-```{r}
-1 + 1
-```
+## Education
+
+The University of Southern Mississippi | Hattiesburg, MS |
+Ph.D. in Education (Research, Evaluation, Statistics, and Assessment) |
+2025 - 2029 (expected)
+
+The University of Massachusetts Amherst | Amherst, MA |
+B.S. in Psychology (Neuroscience Track) |
+2022 - 2025
+
+:::
+
+
+
 
 

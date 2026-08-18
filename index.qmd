@@ -9,6 +9,9 @@ about:
     - text: CV
       icon: file-person
     
+    - text: LinkedIn
+      icon: linkedin
+      href: www.linkedin.com/in/winsonychen
     - text: Email
       icon: envelope
       href: mailto:winsonychen@gmail.com

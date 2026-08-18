@@ -5,10 +5,25 @@ project:
 website:
   title: "Winson Y. Chen"
   navbar:
+    search: true
     left:
-      - href: index.qmd
-        text: Home
-      - Psychometrics_Portfolio.qmd
+      - text: "Home"
+        href: index.qmd
+      - text: "Psychometrics Portfolio"
+        href: Psychometrics_Portfolio.qmd
+  
+  sidebar:
+    - title: "Psychometrics Portfolio"
+      style: "docked"
+      search: true
+      contents: 
+        - text: "Introduction"
+          href: Psychometrics_Portfolio.qmd
+        - text: "Project 1 - Foundational Analyses Using Multiple-Choice Response Data"
+          href: project_1.qmd
+        - text: "Project 2"
+          href: project_2.qmd
+
 format:
   html:
     theme: minty

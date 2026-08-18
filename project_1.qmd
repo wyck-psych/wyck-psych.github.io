@@ -1,5 +1,9 @@
 ---
 title: "Project 1 - Foundational Analyses Using Multiple-Choice Response Data"
+toc: true
 format: html
 ---
 
+## Section 1
+
+## Section 2

@@ -1,5 +1,10 @@
 ---
-title: "Project 2"
+title: "Project 2 - PISA Data Wrangling and Vertical Scaling"
+toc: true
 format: html
 ---
+
+## Section 1
+
+## Section 2
 

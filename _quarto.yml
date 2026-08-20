@@ -19,10 +19,10 @@ website:
         - text: "Introduction"
           href: Psychometrics_Portfolio.qmd
         - text: "---"
-        - text: "Project 1 - Foundational Analyses Using Multiple-Choice Response Data"
+        - text: "Project 1 - Foundational Analyses using Multiple-Choice Response Data from an Achievement Test"
           href: project_1.qmd
         - text: "---"
-        - text: "Project 2 - NAEP Data Wrangling and Vertical Scaling"
+        - text: "Project 2"
           href: project_2.qmd
 
 format:

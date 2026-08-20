@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Project 1 - Foundational Analyses Using Multiple-Choice Response Data – Winson Y. Chen</title>
+<title>Project 1 - Foundational Analyses using Multiple-Choice Response Data from an Achievement Test – Winson Y. Chen</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -22,6 +22,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -71,6 +106,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -111,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./project_1.html">Project 1 - Foundational Analyses Using Multiple-Choice Response Data</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./project_1.html">Project 1 - Foundational Analyses using Multiple-Choice Response Data from an Achievement Test</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -133,14 +197,14 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./project_1.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Project 1 - Foundational Analyses Using Multiple-Choice Response Data</span></a>
+ <span class="menu-text">Project 1 - Foundational Analyses using Multiple-Choice Response Data from an Achievement Test</span></a>
   </div>
 </li>
         <li class="px-0"><hr class="sidebar-divider hi "></li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./project_2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Project 2 - NAEP Data Wrangling and Vertical Scaling</span></a>
+ <span class="menu-text">Project 2</span></a>
   </div>
 </li>
     </ul>
@@ -153,8 +217,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#section-1" id="toc-section-1" class="nav-link active" data-scroll-target="#section-1">Section 1</a></li>
-  <li><a href="#section-2" id="toc-section-2" class="nav-link" data-scroll-target="#section-2">Section 2</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#dataset-preparation-and-preliminary-inspection" id="toc-dataset-preparation-and-preliminary-inspection" class="nav-link" data-scroll-target="#dataset-preparation-and-preliminary-inspection">Dataset Preparation and Preliminary Inspection</a></li>
+  <li><a href="#classical-reliability-and-item-analysis" id="toc-classical-reliability-and-item-analysis" class="nav-link" data-scroll-target="#classical-reliability-and-item-analysis">Classical Reliability and Item Analysis</a></li>
+  <li><a href="#dimensionality-analysis" id="toc-dimensionality-analysis" class="nav-link" data-scroll-target="#dimensionality-analysis">Dimensionality Analysis</a></li>
   </ul>
 </nav>
     </div>
@@ -163,7 +229,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Project 1 - Foundational Analyses Using Multiple-Choice Response Data</h1>
+<h1 class="title">Project 1 - Foundational Analyses using Multiple-Choice Response Data from an Achievement Test</h1>
 </div>
 
 
@@ -180,11 +246,129 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="section-1" class="level2">
-<h2 class="anchored" data-anchor-id="section-1">Section 1</h2>
+<hr>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>The goal of this project is to analyze data collected from a multiple-choice achievement test. This data format is common within educational measurement, and contains one observation (row) per test-taker and one column per item, with each cell containing an unscored item response.</p>
+<p>In this project, we will be analyzing the <em>Homeostasis Concept Inventory</em> (HCI) (McFarland et al., 2017), which is a 20-item multiple-choice test designed to measure undergraduate students’ understanding of the homeostasis concept. The HCI was developed through an iterative process which involved identifying common student misconceptions through think-aloud interviews and expert feedback, and developing distractors based on these misconceptions.</p>
+<p>The dataset <code>HCIdata</code> is part of the <code>{ShinyItemAnalysis}</code> R package (Martinková &amp; Drabinová, 2018) and contains N=669 observations which were collected as part of the validation process for the final version of the HCI (McFarland et al., 2017). Notably, the dataset contains both the scored and unscored item responses, which allows for distractor analysis, as well as matching variables such as gender and minority membership, which allows for differential item and distractor functioning (DIF and DDF) analyses.</p>
+<p>The <code>HCIdata</code> dataset contains 49 variables. The first 20 variables (1-20) are the unscored item responses which are recorded as A/B/C/D. The next 20 variables (21-40) are the scored item responses which are recorded as 0/1. The next variable (41) is the total/sum score. The last 8 variables (42-49) are demographic variables including gender, plans to major in the life sciences, class level/year in college, ethnicity, minority membership, English as the student’s first language, course type, and type of school. A complete description of this dataset can be found in the documentation for the <code>{ShinyItemAnalysis}</code> package (Martinková &amp; Drabinová, 2018) and additional information can also be found in the validation study for the HCI (McFarland et al., 2017).</p>
+<hr>
 </section>
-<section id="section-2" class="level2">
-<h2 class="anchored" data-anchor-id="section-2">Section 2</h2>
+<section id="dataset-preparation-and-preliminary-inspection" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-preparation-and-preliminary-inspection">Dataset Preparation and Preliminary Inspection</h2>
+<p>First, the dataset and the required R packages were loaded into RStudio, and variables from the dataset were extracted to facilitate analysis. The dataset contained no missing values, so no treatment of missing values is needed.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Load the dataset and required packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ShinyItemAnalysis)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"HCIdata"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="do">### Extract variables to facilitate analysis</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>items_unscored <span class="ot">&lt;-</span> HCIdata[ , <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>items_scored <span class="ot">&lt;-</span> HCIdata[ ,<span class="dv">21</span><span class="sc">:</span><span class="dv">40</span>]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>gender_group <span class="ot">&lt;-</span> HCIdata<span class="sc">$</span>gender</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>minority_group <span class="ot">&lt;-</span> HCIdata<span class="sc">$</span>minority</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="do">### Compute total scores</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>total_scores <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(items_scored)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Before performing any analyses, a preliminary inspection of the total score distribution provides a useful overview of the instrument’s performance and suitability for subsequent analyses. This can be done by examining a histogram and descriptive statistics of the total scores. Some key issues to look for include: excessive skewness (which indicates a floor or ceiling effect), multimodality (which may indicate multidimensionality or distinct subgroups in the sample), and insufficient variability in scores (which can attenuate or destabilize estimates due to restriction of range).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(total_scores)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="project_1_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(total_scores)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   vars   n  mean   sd median trimmed  mad min max range  skew kurtosis   se
+X1    1 669 12.13 3.65     12   12.22 4.45   3  20    17 -0.17    -0.68 0.14</code></pre>
+</div>
+</div>
+<p>Overall, the total score distribution looks healthy. The mean of 12.13 indicates that the average student scored roughly 60.7%, which suggests that the difficulty of the test is well-aligned with the target population. The skewness of -0.17 is very small and indicates no ceiling or floor effects. The kurtosis of -0.68 indicates that the distribution is slightly platykurtic (flatter/less peaked), which is desirable for differentiating students across the middle range of the score distribution. Lastly, the histogram and the standard deviation of 3.65 suggests that there is sufficient variation in the total scores.</p>
+<hr>
+</section>
+<section id="classical-reliability-and-item-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="classical-reliability-and-item-analysis">Classical Reliability and Item Analysis</h2>
+<p>The internal consistency reliability of the composite scores may be estimated using the coefficient alpha based on Pearson correlations (Phi coefficients). Additionally, since the items are dichotomously scored but are hypothesized to reflect an underlying normally distributed attribute, it may be helpful to estimate the ordinal alpha based on tetrachoric correlations, which represents the hypothetical reliability of the underlying attribute scores.</p>
+<p>Both the Pearson correlation (Phi coefficient) and the tetrachoric correlation depend on the item difficulties. Both methods most accurately reflect the true linear relationship when the item difficulties are close to <em>p</em> = 0.5 (the mean of the underlying attribute distribution). When the item difficulties are closer to the extremes, the Phi coefficient is known to be attenuated (biased low), and the tetrachoric correlation remains unbiased but is less precise (larger standard errors).</p>
+<p>It is useful to report both the coefficient alpha and the ordinal alpha for two reasons. The first reason is the difference in interpretation, which was briefly mentioned above. The coefficient alpha is an estimate of the reliability of the <em>composite scores</em> and reflects the reliability of the instrument as it is operationally scored and used. The ordinal alpha is an estimate of the reliability of the <em>underlying attribute distribution</em>, which reflects the theoretical reliability of measurement if the underlying attribute could be measured without information loss from being dichotomously scored. The second reason for reporting both estimates is that the difference between the estimates itself provides useful diagnostic information. If the ordinal alpha is not much higher than the coefficient alpha, then this suggests that there is little information loss from dichotomous scoring. Conversely, a substantial gap suggests that the item set includes more extreme difficulty values, and that meaningful information is loss by dichotomous scoring.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Coefficient alpha using Pearson correlations</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(items_scored)[<span class="fu">c</span>(<span class="st">"total"</span>, <span class="st">"feldt"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+ raw_alpha std.alpha   G6(smc) average_r      S/N       ase      mean        sd
+ 0.7161644 0.7215166 0.7300311 0.1146869 2.590878 0.0158408 0.6064275 0.1825975
+  median_r
+ 0.1205056
+
+$feldt
+
+   95% confidence boundaries (Feldt)
+ lower alpha upper
+  0.68  0.72  0.75</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Ordinal alpha using tetrachoric correlations</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>tetra <span class="ot">&lt;-</span> <span class="fu">tetrachoric</span>(items_scored)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(tetra<span class="sc">$</span>rho)[<span class="fu">c</span>(<span class="st">"total"</span>, <span class="st">"feldt"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+ raw_alpha std.alpha   G6(smc) average_r      S/N  median_r
+ 0.8295802 0.8295802 0.8587097 0.1957491 4.867863 0.2072622
+
+$feldt
+
+   95% confidence boundaries (Feldt)
+ lower alpha upper
+   0.7  0.83  0.92</code></pre>
+</div>
+</div>
+<p>The coefficient alpha estimate is 0.72 (95% CI [.68, .75]) and the ordinal alpha estimate is 0.83 (95% CI [.70, .92]). The difference is fairly substantial and suggests that the item set contains items with extreme difficulty values, and that there is meaningful information loss from dichotomous scoring. Furthermore, the width of the confidence interval for the ordinal alpha estimate is 0.22, compared to 0.07 for the coefficient alpha estimate. This is consistent with the tetrachoric correlation being a less precise reflection of the true linear relationship when the item difficulty values are extreme, as mentioned earlier.</p>
+<p>The internal consistency of the composite scores likely falls within the “acceptable” range according to the recommendations of Nunnally &amp; Bernstein (1994). However, given that the instrument was designed to measure a single construct, this level of internal consistency is not particularly strong. Additionally, the recommendation by Nunnally is for early-stage research and classroom practice, and is below levels recommended for high-stakes decisions. Thus, the instrument is recommended for use in classroom settings, but should not be used as the sole basis for high-stakes decisions.</p>
+<p>Next, the classical item difficulty, discrimination, and alpha-if-dropped are calculated and summarized in the table below. For item discrimination, both the item-total and the item-rest correlations are reported as point-biserial correlations, consistent with standard practice in classical item analysis.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>CTT_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">difficulty =</span> <span class="fu">round</span>(<span class="fu">colMeans</span>(items_scored), <span class="dv">3</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">discrimination_IT =</span> <span class="fu">round</span>(<span class="fu">ItemAnalysis</span>(items_scored)<span class="sc">$</span>RIT, <span class="dv">3</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">discrimination_IR =</span> <span class="fu">round</span>(<span class="fu">ItemAnalysis</span>(items_scored)<span class="sc">$</span>RIR, <span class="dv">3</span>),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">alpha_drop =</span> <span class="fu">round</span>(<span class="fu">alpha</span>(items_scored)<span class="sc">$</span>alpha.drop<span class="sc">$</span>raw_alpha, <span class="dv">3</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                           )</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>CTT_results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     difficulty discrimination_IT discrimination_IR alpha_drop
+QR1       0.695             0.410             0.298      0.704
+QR2       0.750             0.334             0.222      0.711
+QR3       0.848             0.430             0.344      0.702
+QR4       0.399             0.305             0.177      0.715
+QR5       0.445             0.390             0.265      0.707
+QR6       0.359             0.458             0.345      0.700
+QR7       0.541             0.240             0.106      0.722
+QR8       0.703             0.440             0.330      0.701
+QR9       0.429             0.344             0.217      0.712
+QR10      0.641             0.387             0.267      0.707
+QR11      0.770             0.397             0.293      0.705
+QR12      0.577             0.421             0.300      0.704
+QR13      0.601             0.477             0.363      0.698
+QR14      0.755             0.441             0.339      0.701
+QR15      0.435             0.431             0.311      0.703
+QR16      0.604             0.484             0.371      0.697
+QR17      0.291             0.173             0.049      0.725
+QR18      0.789             0.506             0.416      0.695
+QR19      0.779             0.455             0.358      0.700
+QR20      0.717             0.443             0.336      0.701</code></pre>
+</div>
+</div>
+<p>Notably, item QR17 has very low discrimination (RIR = .049) as well as being a challenging item (<em>p</em> = .291). This indicates that item QR17 is highly problematic, since individuals who correctly answered the item were not meaningfully more likely to have a higher total score. This is consistent with item QR17 having an alpha-if-dropped of 0.725, which is higher than the overall coefficient alpha estimate. Thus, item QR17 is recommended for revision.</p>
+<p>Additionally, item QR7 (<em>p</em> = .541, RIR = .106, <span class="math inline">\(\alpha_{drop}\)</span> = .722) and item QR4 (<em>p</em> = .399, RIR = .177, <span class="math inline">\(\alpha_{drop}\)</span> = .715) have low discrimination which is not attributable to floor or ceiling effects. Thus, these two items may also warrant revision.</p>
+<hr>
+</section>
+<section id="dimensionality-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="dimensionality-analysis">Dimensionality Analysis</h2>
 
 
 </section>

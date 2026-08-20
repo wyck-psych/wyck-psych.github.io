@@ -1,5 +1,5 @@
 ---
-title: "Project 2 - NAEP Data Wrangling and Vertical Scaling"
+title: "Project 2"
 toc: true
 format: html
 ---

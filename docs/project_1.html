@@ -220,6 +220,7 @@ window.Quarto = {
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#dataset-preparation-and-preliminary-inspection" id="toc-dataset-preparation-and-preliminary-inspection" class="nav-link" data-scroll-target="#dataset-preparation-and-preliminary-inspection">Dataset Preparation and Preliminary Inspection</a></li>
   <li><a href="#classical-reliability-and-item-analysis" id="toc-classical-reliability-and-item-analysis" class="nav-link" data-scroll-target="#classical-reliability-and-item-analysis">Classical Reliability and Item Analysis</a></li>
+  <li><a href="#classical-distractor-analysis" id="toc-classical-distractor-analysis" class="nav-link" data-scroll-target="#classical-distractor-analysis">Classical Distractor Analysis</a></li>
   <li><a href="#dimensionality-analysis" id="toc-dimensionality-analysis" class="nav-link" data-scroll-target="#dimensionality-analysis">Dimensionality Analysis</a></li>
   </ul>
 </nav>
@@ -367,8 +368,19 @@ QR20      0.717             0.443             0.336      0.701</code></pre>
 <p>Additionally, item QR7 (<em>p</em> = .541, RIR = .106, <span class="math inline">\(\alpha_{drop}\)</span> = .722) and item QR4 (<em>p</em> = .399, RIR = .177, <span class="math inline">\(\alpha_{drop}\)</span> = .715) have low discrimination which is not attributable to floor or ceiling effects. Thus, these two items may also warrant revision.</p>
 <hr>
 </section>
+<section id="classical-distractor-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="classical-distractor-analysis">Classical Distractor Analysis</h2>
+<p>Before performing distractor analysis, there is a minor issue with the <code>HCIdata</code> dataset that needs to be corrected. Item 5 (A5) should have four response options (A/B/C/D). However, looking at the dataset, two entries have been incorrectly coded as lowercase “c” rather than uppercase “C”, resulting in the variable having 5 factor levels (A/B/C/c/D). This can be easily corrected using the <code>fct_recode()</code> function in the <code>{forcats}</code> package, which is part of the tidyverse family of R packages.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>items_unscored<span class="sc">$</span>A5 <span class="ot">&lt;-</span> <span class="fu">fct_recode</span>(items_unscored<span class="sc">$</span>A5, <span class="st">"C"</span> <span class="ot">=</span> <span class="st">"c"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now the two factor levels have been merged. Looking at the dataset, item A5 now has 4 factor levels (A/B/C/D), which is correct. Note that not all items have 4 factor levels; the majority have either 3 or 4 factor levels, with a few items having 5 factor levels. There are no additional issues with the dataset, so we may proceed with distractor analysis.</p>
+<hr>
+</section>
 <section id="dimensionality-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="dimensionality-analysis">Dimensionality Analysis</h2>
+<hr>
 
 
 </section>

@@ -89,5 +89,38 @@
       "Psychometrics Portfolio",
       "Project 1 - Foundational Analyses using Multiple-Choice Response Data from an Achievement Test"
     ]
+  },
+  {
+    "objectID": "Psychometrics_Portfolio.html#introduction",
+    "href": "Psychometrics_Portfolio.html#introduction",
+    "title": "Psychometrics Portfolio",
+    "section": "Introduction",
+    "text": "Introduction\nThis portfolio is my attempt to catalog and showcase the various kinds of analyses that a psychometrician might perform with different kinds of data in different fields. The portfolio is structured as a series of projects; each involves taking a particular real-world dataset and running a comprehensive set of analyses which are appropriate for the properties of the data and the goals of stakeholders. All analyses are performed using the R programming language and the RStudio integrated development environment (IDE).",
+    "crumbs": [
+      "Psychometrics Portfolio",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "Psychometrics_Portfolio.html#reproducibility",
+    "href": "Psychometrics_Portfolio.html#reproducibility",
+    "title": "Psychometrics Portfolio",
+    "section": "Reproducibility",
+    "text": "Reproducibility",
+    "crumbs": [
+      "Psychometrics Portfolio",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "project_1.html#classical-distractor-analysis",
+    "href": "project_1.html#classical-distractor-analysis",
+    "title": "Project 1 - Foundational Analyses using Multiple-Choice Response Data from an Achievement Test",
+    "section": "Classical Distractor Analysis",
+    "text": "Classical Distractor Analysis\nBefore performing distractor analysis, there is a minor issue with the HCIdata dataset that needs to be corrected. Item 5 (A5) should have four response options (A/B/C/D). However, looking at the dataset, two entries have been incorrectly coded as lowercase “c” rather than uppercase “C”, resulting in the variable having 5 factor levels (A/B/C/c/D). This can be easily corrected using the fct_recode() function in the {forcats} package, which is part of the tidyverse family of R packages.\n\nlibrary(forcats)\nitems_unscored$A5 &lt;- fct_recode(items_unscored$A5, \"C\" = \"c\")\n\nNow the two factor levels have been merged. Looking at the dataset, item A5 now has 4 factor levels (A/B/C/D), which is correct. Note that not all items have 4 factor levels; the majority have either 3 or 4 factor levels, with a few items having 5 factor levels. There are no additional issues with the dataset, so we may proceed with distractor analysis.",
+    "crumbs": [
+      "Psychometrics Portfolio",
+      "Project 1 - Foundational Analyses using Multiple-Choice Response Data from an Achievement Test"
+    ]
   }
 ]

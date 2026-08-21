@@ -89,10 +89,26 @@ Additionally, item QR7 (*p* = .541, RIR = .106, $\alpha_{drop}$ = .722) and item
 
 ---
 
+## Classical Distractor Analysis
+
+Before performing distractor analysis, there is a minor issue with the `HCIdata` dataset that needs to be corrected. Item 5 (A5) should have four response options (A/B/C/D). However, looking at the dataset, two entries have been incorrectly coded as lowercase "c" rather than uppercase "C", resulting in the variable having 5 factor levels (A/B/C/c/D). This can be easily corrected using the `fct_recode()` function in the `{forcats}` package, which is part of the tidyverse family of R packages. 
+
+```{r}
+library(forcats)
+items_unscored$A5 <- fct_recode(items_unscored$A5, "C" = "c")
+```
+
+Now the two factor levels have been merged. Looking at the dataset, item A5 now has 4 factor levels (A/B/C/D), which is correct. Note that not all items have 4 factor levels; the majority have either 3 or 4 factor levels, with a few items having 5 factor levels. There are no additional issues with the dataset, so we may proceed with distractor analysis. 
+
+
+
+---
+
 ## Dimensionality Analysis
 
 
 
+---
 
 
 

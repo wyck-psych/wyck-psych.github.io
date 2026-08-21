@@ -32,21 +32,19 @@ data("HCIdata")
 ### Extract variables to facilitate analysis
 items_unscored <- HCIdata[ , 1:20]
 items_scored <- HCIdata[ ,21:40]
-gender_group <- HCIdata$gender
-minority_group <- HCIdata$minority
 
 ### Compute total scores
 total_scores <- rowSums(items_scored)
 ```
 
-Before performing any analyses, a preliminary inspection of the total score distribution provides a useful overview of the instrument's performance and suitability for subsequent analyses. This can be done by examining a histogram and descriptive statistics of the total scores. Some key issues to look for include: excessive skewness (which indicates a floor or ceiling effect), multimodality (which may indicate multidimensionality or distinct subgroups in the sample), and insufficient variability in scores (which can attenuate or destabilize estimates due to restriction of range). 
+Before performing any analyses, a preliminary inspection of the total score distribution provides a useful overview of the instrument's performance and suitability for subsequent analyses. This can be done by examining a histogram and descriptive statistics of the total scores. Some key issues to look for include: excessive skewness (which indicates a floor or ceiling effect), multimodality (which may indicate multidimensionality or distinct subgroups in the sample), and insufficient variability in scores (which can attenuate or destabilize estimates due to restriction of range; this may be indicated by a large positive kurtosis). 
 
 ```{r}
 hist(total_scores)
 describe(total_scores)
 ```
 
-Overall, the total score distribution looks healthy. The mean of 12.13 indicates that the average student scored roughly 60.7%, which suggests that the difficulty of the test is well-aligned with the target population. The skewness of -0.17 is very small and indicates no ceiling or floor effects. The kurtosis of -0.68 indicates that the distribution is slightly platykurtic (flatter/less peaked), which is desirable for differentiating students across the middle range of the score distribution. Lastly, the histogram and the standard deviation of 3.65 suggests that there is sufficient variation in the total scores. 
+Overall, the total score distribution looks healthy. The mean of 12.13 indicates that the average student scored roughly 60.7%, which suggests that the difficulty of the test is well-aligned with the target population. The skewness of -0.17 is very small and indicates no ceiling or floor effects. The kurtosis of -0.68 indicates that the distribution is slightly platykurtic (flatter peak/thinner tails), which is desirable for differentiating students across the middle range of the score distribution. Lastly, the histogram and the standard deviation of 3.65 suggests that there is sufficient variation in the total scores. 
 
 ---
 

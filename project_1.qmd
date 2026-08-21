@@ -32,9 +32,7 @@ data("HCIdata")
 ### Extract variables to facilitate analysis
 items_unscored <- HCIdata[ , 1:20]
 items_scored <- HCIdata[ ,21:40]
-
-### Compute total scores
-total_scores <- rowSums(items_scored)
+total_scores <- HCIdata$total
 ```
 
 Before performing any analyses, a preliminary inspection of the total score distribution provides a useful overview of the instrument's performance and suitability for subsequent analyses. This can be done by examining a histogram and descriptive statistics of the total scores. Some key issues to look for include: excessive skewness (which indicates a floor or ceiling effect), multimodality (which may indicate multidimensionality or distinct subgroups in the sample), and insufficient variability in scores (which can attenuate or destabilize estimates due to restriction of range; this may be indicated by a large positive kurtosis). 

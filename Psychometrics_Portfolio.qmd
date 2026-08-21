@@ -26,11 +26,12 @@ This portfolio was designed with reproducibility in mind. Reproducibility asks t
 
 To reproduce the analyses, I recommend the following steps: 
 
-1. Clone the github repository for the portfolio website by running `git clone https://github.com/wyck-psych/wyck-psych.github.io.git` in the terminal.
-2. Change the directory to the cloned project folder by typing `cd` followed by a space in the terminal and then dragging the cloned project folder into the terminal window. Most terminals will auto-fill the correct path to the project folder. Typically on Windows, the cloned project folder ends up in your `\Users` folder. Then run the full command, which will look something like `cd C:\Users\winso\wyck-psych.github.io`. 
-3. Once the directory is set to the cloned project folder, run `rig rstudio renv.lock` in the terminal. This tells `rig` to open RStudio using the R version recorded in the `renv.lock` file. If that R version is not currently installed, `rig` will prompt you to install it. 
-4. Once the project is opened in RStudio, run `renv::restore()` in the R console. This will install the exact date-snapshotted package versions into the project library. 
-5. Once the packages are restored, the entire portfolio can be reproduced by running `quarto render` in RStudio's built-in terminal (Tools → Terminal). 
+1. Make sure that you have RStudio and `rig` installed. 
+2. Clone the github repository for the portfolio website by running `git clone https://github.com/wyck-psych/wyck-psych.github.io.git` in the terminal.
+3. Change the directory to the cloned project folder by typing `cd` followed by a space in the terminal and then dragging the cloned project folder into the terminal window. Most terminals will auto-fill the correct path to the project folder. Typically on Windows, the cloned project folder ends up in your `\Users` folder. Then run the full command, which will look something like `cd C:\Users\winso\wyck-psych.github.io`. 
+4. Once the directory is set to the cloned project folder, run `rig rstudio renv.lock` in the terminal. This tells `rig` to open RStudio using the R version recorded in the `renv.lock` file. If that R version is not currently installed, `rig` will prompt you to install it. 
+5. Once the project is opened in RStudio, run `renv::restore()` in the R console. This will install the exact date-snapshotted package versions into the project library. 
+6. Once the packages are restored, the entire portfolio can be reproduced by running `quarto render` in RStudio's built-in terminal (Tools → Terminal). 
 
 I recommend using a tool such as `rig` (an R installation manager which allows for switching between multiple versions of R) to load the exact R version recorded in the `renv.lock` file because `{renv}` may run into issues if a different version of R is used. To avoid headaches, it is easier to load the exact R version recorded using `rig`. 
 

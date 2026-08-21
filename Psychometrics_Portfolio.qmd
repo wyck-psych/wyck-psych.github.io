@@ -24,5 +24,7 @@ This portfolio was designed with reproducibility in mind. Reproducibility asks t
 
 *For those who wish to reproduce the analyses almost exactly*, this portfolio utilizes the `{renv}` package (Ushey & Wickham, 2026), which creates reproducible environments for R projects. `{renv}` works by creating a project library that contains only the packages used in this portfolio. Additionally, `{renv}` creates a lockfile that contains the specific versions of every package used, as well as the repositories where the package versions are stored. The Comprehensive R Archive Network (CRAN) is the most popular repository; however, CRAN only stores the latest versions of packages. Instead, the `{renv}` packages uses the Posit Public Package Manager (P3M), as it stores older package versions. P3M has an additional benefit for reproducibility, which is that it stores *daily snapshots* of CRAN; this means that one can load the exact same package versions that were used by the author of the analyses on the day that the analyses were originally performed. 
 
+To reproduce the analyses, I recommend the following steps: (1) clone the github repository for the portfolio website, (2) install the R version recorded in the "renv.lock" file, (3) open the .Rproj file, and (4) run `renv::restore()` in the R console. Additionally, here are some tips to ensure that `{renv}` runs smoothly. 
+
 ---
 

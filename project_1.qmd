@@ -98,13 +98,13 @@ items_unscored$A5 <- fct_recode(items_unscored$A5, "C" = "c")
 
 Now the two factor levels have been merged. Looking at the dataset, item A5 now has 4 factor levels (A/B/C/D), which is correct. Note that not all items have 4 factor levels; the majority have either 3 or 4 factor levels, with a few items having 5 factor levels. There are no additional issues with the dataset, so we may proceed with distractor analysis. 
 
-
+TBD
 
 ---
 
 ## Dimensionality Analysis
 
-
+TBD
 
 ---
 

@@ -74,10 +74,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-de63f62b328812d8e578a4d74e282472.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-8d0ed8221a34e91c96b4c820d655907d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-b0f478263e242d87cba2e1790d46822e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -276,7 +276,7 @@ window.Quarto = {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="project_1_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="project_1_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" style="width:75.0%"></p>
 </figure>
 </div>
 </div>
@@ -372,7 +372,66 @@ QR20      0.717             0.443             0.336      0.701</code></pre>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>items_unscored<span class="sc">$</span>A5 <span class="ot">&lt;-</span> <span class="fu">fct_recode</span>(items_unscored<span class="sc">$</span>A5, <span class="st">"C"</span> <span class="ot">=</span> <span class="st">"c"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now the two factor levels have been merged. Looking at the dataset, item A5 now has 4 factor levels (A/B/C/D), which is correct. Note that not all items have 4 factor levels; the majority have either 3 or 4 factor levels, with a few items having 5 factor levels. There are no additional issues with the dataset, so we may proceed with distractor analysis.</p>
-<p>TBD</p>
+<p>Distractor analysis may be divided into “classical” and “model-based” approaches. This section covers classical distractor analysis, while a later section will cover model-based approaches such as the nominal response model (NRM). Classical distractor analysis primarily involves examining statistics such as the proportions of test-takers who select each distractor, the mean of the total scores for all test-takers who select each distractor, and the point-biserial or biserial correlations between each distractor and the total scores. The primary goal of classical distractor analysis is to guide item development by identifying non-functioning or non-discriminating distractors.</p>
+<p>Non-functioning distractors are distractors which are selected by a very low percentage of test-takers. A common rule-of-thumb is that distractors which are selected by less than 5% of test-takers are non-functioning. However, an exception to this rule can be made for very easy items. For instance, for a multiple-choice item in which 85% of test-takers chose the correct answer, it is likely that many of the distractors would be considered non-functioning under the 5% rule. However, such distractors are not necessarily problematic, and such items can still have good discrimination and be useful for content coverage purposes.</p>
+<p>Non-discriminating distractors are distractors which are equally likely to be selected across the total score range. Good distractors test for misconceptions which are more common in test-takers with a lower total score. As total score increases, test-takers are expected to not have as many misconceptions, and thus should be less likely to select the distractors. If a distractor is roughly equally likely to be selected by all test-takers, no matter their total score, then this suggests that the functioning of the distractor may be unrelated to the construct of interest. For instance, the distractor may be selected due to confusing language or an unintentional cue in the item stem.</p>
+<p>An effective and efficient way to screen for non-functioning and non-discriminating distractors is to examine <em>trace plots</em>, which are also called <em>distractor plots</em>. Distractor plots can be created using the <code>plotDistractorAnalysis()</code> function in the <code>{ShinyDataAnalysis}</code> package. To make the plots look a little nicer, the <code>{ggplot2}</code> and <code>{patchwork}</code> packages are also used.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Load packages</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Create the distractor plots for all 20 items</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>distractor_plots <span class="ot">&lt;-</span> <span class="fu">plotDistractorAnalysis</span>(</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Data =</span> items_unscored, </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">key =</span> HCIkey, </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">num.groups =</span> <span class="dv">4</span>, </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">item =</span> <span class="st">"all"</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>                                           )</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="do">## Make all plots have the same color scheme for response options</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Also make all plots have more tick marks on the vertical axis</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(distractor_plots)) {</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  distractor_plots[[i]] <span class="ot">&lt;-</span> distractor_plots[[i]] <span class="sc">+</span> </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="st">"red"</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">B =</span> <span class="st">"green"</span>,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">C =</span> <span class="st">"cyan"</span>,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">D =</span> <span class="st">"blue"</span>,</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">E =</span> <span class="st">"magenta"</span>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>                       ) <span class="sc">+</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.1</span>),</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>                       <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>                       )</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>                                        }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>To understand the elements of a distractor plot, let us examine the distractor plot for item 1 below. The horizontal axis represents the total score, which has been grouped into 4 quantiles. Group 1 includes the lowest 25% of total scores, group 2 includes the next 25%, and so on. The vertical axis represents the proportion of test-takers who selected each response option. The correct answer, as defined by the scoring key, is shown using a solid line, while distractors are shown using dashed lines.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>distractor_plots<span class="sc">$</span>A1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="project_1_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now let’s examine the distractor plots for all 20 items. The plots are neatly summarized into a single mosaic plot. The legends and axis titles are omitted for visual clarity; all plots within the mosaic use the same coloring scheme described in the code above.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(distractor_plots, <span class="at">ncol =</span> <span class="dv">4</span>) <span class="sc">&amp;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">7</span>),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">5</span>),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="project_1_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" style="width:125.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 <hr>
 </section>
 <section id="dimensionality-analysis" class="level2">

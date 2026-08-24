@@ -30,6 +30,6 @@ format:
     theme: minty
     css: styles.css
     toc: true
-
-
+    code-block-bg: "#d4efdf"
+    highlight-style: github
 

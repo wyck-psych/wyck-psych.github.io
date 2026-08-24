@@ -38,6 +38,8 @@ total_scores <- HCIdata$total
 Before performing any analyses, a preliminary inspection of the total score distribution provides a useful overview of the instrument's performance and suitability for subsequent analyses. This can be done by examining a histogram and descriptive statistics of the total scores. Some key issues to look for include: excessive skewness (which indicates a floor or ceiling effect), multimodality (which may indicate multidimensionality or distinct subgroups in the sample), and insufficient variability in scores (which can attenuate or destabilize estimates due to restriction of range; this may be indicated by a large positive kurtosis). 
 
 ```{r}
+#| out-width: "75%"
+
 hist(total_scores)
 describe(total_scores)
 ```
@@ -96,7 +98,71 @@ items_unscored$A5 <- fct_recode(items_unscored$A5, "C" = "c")
 
 Now the two factor levels have been merged. Looking at the dataset, item A5 now has 4 factor levels (A/B/C/D), which is correct. Note that not all items have 4 factor levels; the majority have either 3 or 4 factor levels, with a few items having 5 factor levels. There are no additional issues with the dataset, so we may proceed with distractor analysis. 
 
-TBD
+Distractor analysis may be divided into "classical" and "model-based" approaches. This section covers classical distractor analysis, while a later section will cover model-based approaches such as the nominal response model (NRM). Classical distractor analysis primarily involves examining statistics such as the proportions of test-takers who select each distractor, the mean of the total scores for all test-takers who select each distractor, and the point-biserial or biserial correlations between each distractor and the total scores. The primary goal of classical distractor analysis is to guide item development by identifying non-functioning or non-discriminating distractors.
+
+Non-functioning distractors are distractors which are selected by a very low percentage of test-takers. A common rule-of-thumb is that distractors which are selected by less than 5% of test-takers are non-functioning. However, an exception to this rule can be made for very easy items. For instance, for a multiple-choice item in which 85% of test-takers chose the correct answer, it is likely that many of the distractors would be considered non-functioning under the 5% rule. However, such distractors are not necessarily problematic, and such items can still have good discrimination and be useful for content coverage purposes. 
+
+Non-discriminating distractors are distractors which are equally likely to be selected across the total score range. Good distractors test for misconceptions which are more common in test-takers with a lower total score. As total score increases, test-takers are expected to not have as many misconceptions, and thus should be less likely to select the distractors. If a distractor is roughly equally likely to be selected by all test-takers, no matter their total score, then this suggests that the functioning of the distractor may be unrelated to the construct of interest. For instance, the distractor may be selected due to confusing language or an unintentional cue in the item stem. 
+
+An effective and efficient way to screen for non-functioning and non-discriminating distractors is to examine *trace plots*, which are also called *distractor plots*. Distractor plots can be created using the `plotDistractorAnalysis()` function in the `{ShinyDataAnalysis}` package. To make the plots look a little nicer, the `{ggplot2}` and `{patchwork}` packages are also used. 
+
+```{r}
+#| message: false
+#| warning: false
+
+## Load packages
+library(ggplot2)
+library(patchwork)
+
+## Create the distractor plots for all 20 items
+distractor_plots <- plotDistractorAnalysis(
+                        Data = items_unscored, 
+                        key = HCIkey, 
+                        num.groups = 4, 
+                        item = "all"
+                                           )
+
+## Make all plots have the same color scheme for response options
+## Also make all plots have more tick marks on the vertical axis
+for (i in seq_along(distractor_plots)) {
+  distractor_plots[[i]] <- distractor_plots[[i]] + 
+    scale_color_manual(values = c(A = "red",
+                                  B = "green",
+                                  C = "cyan",
+                                  D = "blue",
+                                  E = "magenta")
+                       ) +
+    scale_y_continuous(breaks = seq(0, 1, by = 0.1),
+                       limits = c(0, 1)
+                       )
+                                        }
+```
+
+To understand the elements of a distractor plot, let us examine the distractor plot for item 1 below. The horizontal axis represents the total score, which has been grouped into 4 quantiles. Group 1 includes the lowest 25% of total scores, group 2 includes the next 25%, and so on. The vertical axis represents the proportion of test-takers who selected each response option. The correct answer, as defined by the scoring key, is shown using a solid line, while distractors are shown using dashed lines. 
+
+```{r}
+#| fig-height: 5
+#| fig-width: 4
+
+distractor_plots$A1
+```
+
+Now let's examine the distractor plots for all 20 items. The plots are neatly summarized into a single mosaic plot. The legends and axis titles are omitted for visual clarity; all plots within the mosaic use the same coloring scheme described in the code above. 
+
+```{r}
+#| fig-height: 15
+#| out-width: "125%"
+
+wrap_plots(distractor_plots, ncol = 4) & 
+  theme(
+    plot.title = element_text(size = 7),
+    axis.title = element_blank(),
+    axis.text = element_text(size = 5),
+    legend.position = "none"
+        )
+```
+
+
 
 ---
 

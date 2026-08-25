@@ -286,7 +286,7 @@ window.Quarto = {
 X1    1 669 12.13 3.65     12   12.22 4.45   3  20    17 -0.17    -0.68 0.14</code></pre>
 </div>
 </div>
-<p>Overall, the total score distribution looks healthy. The mean of 12.13 indicates that the average student scored roughly 60.7%, which suggests that the difficulty of the test is well-aligned with the target population. The skewness of -0.17 is very small and indicates no ceiling or floor effects. The kurtosis of -0.68 indicates that the distribution is slightly platykurtic (flatter peak/thinner tails), which is desirable for differentiating students across the middle range of the score distribution. Lastly, the histogram and the standard deviation of 3.65 suggests that there is sufficient variation in the total scores.</p>
+<p><em>Overall, the total score distribution looks healthy. The mean of 12.13 indicates that the average student scored roughly 60.7%, which suggests that the difficulty of the test is well-aligned with the target population. The skewness of -0.17 is very small and indicates no ceiling or floor effects. The kurtosis of -0.68 indicates that the distribution is slightly platykurtic (flatter peak/thinner tails), which is desirable for differentiating students across the middle range of the score distribution. Lastly, the histogram and the standard deviation of 3.65 suggests that there is sufficient variation in the total scores.</em></p>
 <hr>
 </section>
 <section id="classical-reliability-and-item-analysis" class="level2">
@@ -360,21 +360,25 @@ QR19      0.779             0.455             0.358      0.700
 QR20      0.717             0.443             0.336      0.701</code></pre>
 </div>
 </div>
-<p>Notably, item QR17 has very low discrimination (RIR = .049) as well as being a challenging item (<em>p</em> = .291). This indicates that item QR17 is highly problematic, since individuals who correctly answered the item were not meaningfully more likely to have a higher total score. This is consistent with item QR17 having an alpha-if-dropped of 0.725, which is higher than the overall coefficient alpha estimate. Thus, item QR17 is recommended for revision.</p>
-<p>Additionally, item QR7 (<em>p</em> = .541, RIR = .106, <span class="math inline">\(\alpha_{drop}\)</span> = .722) and item QR4 (<em>p</em> = .399, RIR = .177, <span class="math inline">\(\alpha_{drop}\)</span> = .715) have low discrimination which is not attributable to floor or ceiling effects. Thus, these two items may also warrant revision.</p>
+<p>Notably, item 17 has very low discrimination (RIR = .049) as well as being a challenging item (<em>p</em> = .291). This indicates that item 17 is highly problematic, since individuals who correctly answered the item were not meaningfully more likely to have a higher total score. This is consistent with item QR17 having an alpha-if-dropped of 0.725, which is higher than the overall coefficient alpha estimate. Thus, item 17 is recommended for revision.</p>
+<p>Additionally, item 7 (<em>p</em> = .541, RIR = .106, <span class="math inline">\(\alpha_{drop}\)</span> = .722) and item 4 (<em>p</em> = .399, RIR = .177, <span class="math inline">\(\alpha_{drop}\)</span> = .715) have low discrimination which is not attributable to floor or ceiling effects. Thus, these two items may also warrant revision.</p>
+<p><em>In conclusion, the classical reliability analysis suggests that the internal consistency of the total scores likely falls within the “acceptable” range according to the recommendations of Nunnally &amp; Bernstein (1994). Furthermore, the difference between the coefficient alpha and the ordinal alpha suggests that there is meaningful information loss from dichotomous scoring. Additionally, the classical item analysis suggests that item 17, item 7, and item 4 have poor discrimination and may benefit from revision, in order of importance.</em></p>
 <hr>
 </section>
 <section id="classical-distractor-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="classical-distractor-analysis">Classical Distractor Analysis</h2>
 <p>Before performing distractor analysis, there is a minor issue with the <code>HCIdata</code> dataset that needs to be corrected. Item 5 (A5) should have four response options (A/B/C/D). However, looking at the dataset, two entries have been incorrectly coded as lowercase “c” rather than uppercase “C”, resulting in the variable having 5 factor levels (A/B/C/c/D). This can be easily corrected using the <code>fct_recode()</code> function in the <code>{forcats}</code> package, which is part of the tidyverse family of R packages.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>items_unscored<span class="sc">$</span>A5 <span class="ot">&lt;-</span> <span class="fu">fct_recode</span>(items_unscored<span class="sc">$</span>A5, <span class="st">"C"</span> <span class="ot">=</span> <span class="st">"c"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Load the forcats package</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Correct the data entry issue for item 5</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>items_unscored<span class="sc">$</span>A5 <span class="ot">&lt;-</span> <span class="fu">fct_recode</span>(items_unscored<span class="sc">$</span>A5, <span class="st">"C"</span> <span class="ot">=</span> <span class="st">"c"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now the two factor levels have been merged. Looking at the dataset, item A5 now has 4 factor levels (A/B/C/D), which is correct. Note that not all items have 4 factor levels; the majority have either 3 or 4 factor levels, with a few items having 5 factor levels. There are no additional issues with the dataset, so we may proceed with distractor analysis.</p>
-<p>Distractor analysis may be divided into “classical” and “model-based” approaches. This section covers classical distractor analysis, while a later section will cover model-based approaches such as the nominal response model (NRM). Classical distractor analysis primarily involves examining statistics such as the proportions of test-takers who select each distractor, the mean of the total scores for all test-takers who select each distractor, and the point-biserial or biserial correlations between each distractor and the total scores. The primary goal of classical distractor analysis is to guide item development by identifying non-functioning or non-discriminating distractors.</p>
+<p>Distractor analysis may be divided into “classical” and “model-based” approaches. This section covers classical distractor analysis, while a later section will cover model-based approaches such as the nominal response model (NRM). Classical distractor analysis primarily involves examining statistics such as the proportions of test-takers who select each distractor and the point-biserial or biserial correlations between each distractor and the total scores. The primary goal of classical distractor analysis is to guide item development by identifying non-functioning or non-discriminating distractors.</p>
 <p>Non-functioning distractors are distractors which are selected by a very low percentage of test-takers. A common rule-of-thumb is that distractors which are selected by less than 5% of test-takers are non-functioning. However, an exception to this rule can be made for very easy items. For instance, for a multiple-choice item in which 85% of test-takers chose the correct answer, it is likely that many of the distractors would be considered non-functioning under the 5% rule. However, such distractors are not necessarily problematic, and such items can still have good discrimination and be useful for content coverage purposes.</p>
-<p>Non-discriminating distractors are distractors which are equally likely to be selected across the total score range. Good distractors test for misconceptions which are more common in test-takers with a lower total score. As total score increases, test-takers are expected to not have as many misconceptions, and thus should be less likely to select the distractors. If a distractor is roughly equally likely to be selected by all test-takers, no matter their total score, then this suggests that the functioning of the distractor may be unrelated to the construct of interest. For instance, the distractor may be selected due to confusing language or an unintentional cue in the item stem.</p>
+<p>Non-discriminating distractors are distractors which are equally likely to be selected across the total score range. Good distractors test for misconceptions which are more common in test-takers with a lower total score. As total score increases, test-takers are expected to not have as many misconceptions, and thus should be less likely to select the distractors. If a distractor is roughly equally likely to be selected by all test-takers, no matter their total score, then this suggests that the functioning of the distractor may be unrelated to the construct of interest. For instance, the distractor may be selected due to confusing language or an unintentional cue in the item stem. Typically, the non-discriminating distractors of interest are those which are not also non-functioning, otherwise they would be simply considered non-functioning.</p>
 <p>An effective and efficient way to screen for non-functioning and non-discriminating distractors is to examine <em>trace plots</em>, which are also called <em>distractor plots</em>. Distractor plots can be created using the <code>plotDistractorAnalysis()</code> function in the <code>{ShinyDataAnalysis}</code> package. To make the plots look a little nicer, the <code>{ggplot2}</code> and <code>{patchwork}</code> packages are also used.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Load packages</span></span>
@@ -397,12 +401,10 @@ QR20      0.717             0.443             0.336      0.701</code></pre>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">B =</span> <span class="st">"green"</span>,</span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">C =</span> <span class="st">"cyan"</span>,</span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">D =</span> <span class="st">"blue"</span>,</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">E =</span> <span class="st">"magenta"</span>)</span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>                       ) <span class="sc">+</span></span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.1</span>),</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>                       <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)</span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>                       )</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>                                        }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">E =</span> <span class="st">"magenta"</span>)) <span class="sc">+</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.1</span>),</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>                       <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>                                        }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>To understand the elements of a distractor plot, let us examine the distractor plot for item 1 below. The horizontal axis represents the total score, which has been grouped into 4 quantiles. Group 1 includes the lowest 25% of total scores, group 2 includes the next 25%, and so on. The vertical axis represents the proportion of test-takers who selected each response option. The correct answer, as defined by the scoring key, is shown using a solid line, while distractors are shown using dashed lines.</p>
 <div class="cell">
@@ -415,15 +417,16 @@ QR20      0.717             0.443             0.336      0.701</code></pre>
 </div>
 </div>
 </div>
-<p>Now let’s examine the distractor plots for all 20 items. The plots are neatly summarized into a single mosaic plot. The legends and axis titles are omitted for visual clarity; all plots within the mosaic use the same coloring scheme described in the code above.</p>
+<p>Now let’s examine the distractor plots for all 20 items. The plots are neatly summarized into a single multi-panel figure. The legends and axis titles are omitted for visual clarity; all plots within the mosaic use the same coloring scheme described in the code above.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(distractor_plots, <span class="at">ncol =</span> <span class="dv">4</span>) <span class="sc">&amp;</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">7</span>),</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">5</span>),</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Combine all plots into a multi-panel figure</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(distractor_plots, <span class="at">ncol =</span> <span class="dv">4</span>) <span class="sc">&amp;</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">7</span>),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">5</span>),</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -432,6 +435,215 @@ QR20      0.717             0.443             0.336      0.701</code></pre>
 </div>
 </div>
 </div>
+<p>Numerical values for the selection proportions, as well as additional statistics such as the sample size for each response option and the point-biserial correlations between each response option and the total scores, are a useful supplement to the distractor plots. The <code>DistractorAnalysis()</code> function in the <code>{ShinyItemAnalysis}</code> package will provide the selection proportions by group, but it does not provide the additional statistics. Thus, I prefer the <code>{CTT}</code> package which has a very similar function called <code>distractorAnalysis()</code>. In fact, the function in the <code>{ShinyItemAnalysis}</code> package is a modified version of the function in the <code>{CTT}</code> package, so the underlying code is very similar.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Load the CTT package</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CTT)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Compute distractor statistics</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>DA_CTT <span class="ot">&lt;-</span> <span class="fu">distractorAnalysis</span>(</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">items =</span> items_unscored,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">key =</span> HCIkey,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">nGroups =</span> <span class="dv">4</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">validResp =</span> <span class="st">"fromItem"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">pTable =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">digits =</span> <span class="dv">2</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>                             )</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>DA_CTT</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$A1
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  29 0.04 -0.25   -0.09  0.09  0.05  0.01  0.00
+B           B  62 0.09 -0.17   -0.07  0.12  0.07  0.09  0.06
+C           C 113 0.17 -0.41   -0.28  0.32  0.16  0.08  0.04
+D       *   D 465 0.70  0.30    0.44  0.46  0.72  0.82  0.90
+
+$A2
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  98 0.15 -0.39   -0.23  0.28  0.11  0.08  0.04
+B       *   B 502 0.75  0.22    0.33  0.59  0.73  0.84  0.92
+C           C  69 0.10 -0.20   -0.09  0.13  0.16  0.08  0.04
+
+$A3
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A       *   A 567 0.85  0.34    0.32  0.67  0.83  0.97  0.99
+B           B  47 0.07 -0.38   -0.16  0.16  0.07  0.01  0.00
+C           C  55 0.08 -0.33   -0.16  0.17  0.10  0.02  0.01
+
+$A4
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  17 0.03 -0.27   -0.07  0.07  0.01  0.00  0.00
+B           B  20 0.03 -0.26   -0.08  0.08  0.01  0.01  0.00
+C           C 365 0.55 -0.28   -0.28  0.61  0.60  0.60  0.33
+D       *   D 267 0.40  0.18    0.43  0.25  0.38  0.40  0.67
+
+$A5
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  71 0.11 -0.23   -0.11  0.15  0.13  0.09  0.04
+B       *   B 298 0.45  0.27    0.51  0.22  0.47  0.50  0.73
+C           C  99 0.15 -0.25   -0.11  0.20  0.15  0.11  0.10
+D           D 201 0.30 -0.31   -0.30  0.43  0.25  0.30  0.13
+
+$A6
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  60 0.09 -0.32   -0.16  0.16  0.13  0.03  0.01
+B           B 369 0.55 -0.42   -0.39  0.71  0.64  0.46  0.32
+C       *   C 240 0.36  0.34    0.55  0.12  0.24  0.50  0.67
+
+$A7
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  77 0.12 -0.25   -0.14  0.17  0.11  0.11  0.03
+B           B 230 0.34 -0.26   -0.15  0.40  0.40  0.31  0.24
+C       *   C 362 0.54  0.11    0.29  0.43  0.49  0.57  0.73
+
+$A8
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A 114 0.17 -0.38   -0.29  0.32  0.16  0.09  0.03
+B           B  85 0.13 -0.35   -0.20  0.22  0.14  0.08  0.02
+C       *   C 470 0.70  0.33    0.49  0.46  0.70  0.83  0.95
+
+$A9
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A 315 0.47 -0.30   -0.31  0.53  0.53  0.55  0.22
+B           B  54 0.08 -0.29   -0.11  0.15  0.05  0.04  0.04
+C           C  13 0.02 -0.23   -0.06  0.06  0.00  0.00  0.00
+D       *   D 287 0.43  0.22    0.47  0.27  0.42  0.42  0.73
+
+$A10
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A       *   A 429 0.64  0.27    0.50  0.43  0.57  0.75  0.93
+B           B 118 0.18 -0.32   -0.25  0.27  0.20  0.14  0.03
+C           C 122 0.18 -0.35   -0.25  0.30  0.23  0.11  0.04
+
+$A11
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A       *   A 515 0.77  0.29    0.37  0.58  0.75  0.89  0.96
+B           B  59 0.09 -0.38   -0.19  0.19  0.08  0.03  0.00
+C           C  95 0.14 -0.31   -0.18  0.23  0.18  0.08  0.04
+
+$A12
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  70 0.10 -0.28   -0.15  0.17  0.14  0.07  0.02
+B           B  12 0.02 -0.14   -0.02  0.03  0.01  0.01  0.01
+C           C  29 0.04 -0.21   -0.07  0.07  0.06  0.03  0.00
+D       *   D 386 0.58  0.30    0.52  0.36  0.49  0.68  0.88
+E           E 172 0.26 -0.34   -0.29  0.37  0.31  0.21  0.08
+
+$A13
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A       *   A 402 0.60  0.36    0.59  0.35  0.45  0.77  0.94
+B           B  52 0.08 -0.29   -0.13  0.14  0.08  0.04  0.01
+C           C  94 0.14 -0.34   -0.21  0.24  0.19  0.06  0.03
+D           D 121 0.18 -0.32   -0.25  0.27  0.27  0.13  0.02
+
+$A14
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A       *   A 505 0.75  0.34    0.44  0.52  0.75  0.90  0.96
+B           B  35 0.05 -0.22   -0.07  0.09  0.09  0.01  0.01
+C           C  80 0.12 -0.32   -0.20  0.22  0.12  0.06  0.02
+D           D  49 0.07 -0.36   -0.17  0.17  0.04  0.03  0.00
+
+$A15
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  84 0.13 -0.25   -0.12  0.21  0.10  0.07  0.08
+B           B 162 0.24 -0.42   -0.35  0.39  0.33  0.15  0.04
+C       *   C 291 0.43  0.31    0.57  0.21  0.32  0.53  0.79
+D           D 132 0.20 -0.15   -0.09  0.19  0.25  0.25  0.10
+
+$A16
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A       *   A 404 0.60  0.37    0.57  0.34  0.54  0.75  0.91
+B           B 166 0.25 -0.43   -0.37  0.41  0.31  0.15  0.04
+C           C  59 0.09 -0.33   -0.16  0.17  0.08  0.04  0.01
+D           D  40 0.06 -0.15   -0.05  0.08  0.07  0.05  0.03
+
+$A17
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A 204 0.30 -0.08    0.04  0.24  0.36  0.37  0.28
+B           B 183 0.27 -0.30   -0.23  0.38  0.20  0.28  0.15
+C       *   C 195 0.29  0.05    0.25  0.24  0.25  0.23  0.50
+D           D  87 0.13 -0.14   -0.06  0.13  0.19  0.13  0.07
+
+$A18
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  46 0.07 -0.32   -0.13  0.14  0.05  0.03  0.01
+B           B  70 0.10 -0.41   -0.22  0.24  0.08  0.01  0.02
+C       *   C 528 0.79  0.42    0.43  0.54  0.84  0.95  0.97
+D           D  25 0.04 -0.25   -0.08  0.08  0.03  0.01  0.00
+
+$A19
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  43 0.06 -0.29   -0.11  0.12  0.07  0.03  0.01
+B           B  47 0.07 -0.32   -0.14  0.15  0.06  0.02  0.01
+C       *   C 521 0.78  0.36    0.42  0.55  0.80  0.92  0.97
+D           D  30 0.04 -0.19   -0.07  0.08  0.05  0.02  0.01
+E           E  28 0.04 -0.25   -0.10  0.10  0.03  0.01  0.00
+
+$A20
+  correct key   n rspP  pbis discrim lower mid50 mid75 upper
+A           A  12 0.02 -0.19   -0.05  0.05  0.01  0.00  0.00
+B           B  39 0.06 -0.34   -0.14  0.14  0.03  0.02  0.00
+C           C 138 0.21 -0.38   -0.28  0.33  0.22  0.14  0.06
+D       *   D 480 0.72  0.34    0.46  0.48  0.74  0.84  0.94</code></pre>
+</div>
+</div>
+<p>Now that the distractor plots and statistics for all 20 items are computed, let us examine the items for any issues with distractor functioning. First, a cursory glance at the distractor plots provides a useful overall picture of distractor functioning. Here are some useful guidelines when examining distractor plots:</p>
+<ol type="1">
+<li>The correct option (solid line) should trend upwards.</li>
+<li>The distractors (dashed lines) should trend downwards.</li>
+<li>The highest total score group should not have any distractors which are selected more frequently than the correct option.</li>
+<li>Flat trendlines suggest non-discriminating distractors.</li>
+<li>Very low proportion trendlines suggest non-functioning distractors.</li>
+</ol>
+<p>An example of an easy but well-discriminating item is item 3 (<em>p</em> = .848, RIR = .344). The correct option trends upwards, the distractors trend downwards, and the distractors are selected at a substantial proportion among lower total score groups.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>distractor_plots<span class="sc">$</span>A3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="project_1_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>An example of a difficult but well-discriminating item is item 6 (<em>p</em> = .359, RIR = .345). The correct option trends upwards, the distractors trend downwards, and the distractors are selected at a substantial proportion among lower total score groups. Since this item is quite difficult, we see that lower total score groups are much more likely to select the distractor option B, and that option B retains a substantial proportion even at higher total score groups.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>distractor_plots<span class="sc">$</span>A6</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="project_1_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>An example of a non-functioning distractor can be found in item 12 (<em>p</em> = .577, RIR = .300). We see that distractor option B (green) is almost never selected, even in the lowest total score group. The exact proportions according to the table above are (.03, .01, .01, .01) for the 4 groups, from lowest to highest total score.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>distractor_plots<span class="sc">$</span>A12</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="project_1_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Overall, the classical distractor analysis indicates that there are relatively few problematic distractors. There are a few potentially non-functional distractors, but there are no clearly non-discriminating distractors. This is expected since the instrument was developed with distractor functioning in mind. Based on overall selection proportions, the potential non-functioning distractors include:</p>
+<ul>
+<li>Item 1: distractor A (prop = .04).</li>
+<li>Item 4: distractors A (prop = .03) and B (prop = .03).</li>
+<li>Item 9: distractor C (prop = .02).</li>
+<li>Item 12: distractors B (prop = .02) and C (prop = .04).</li>
+<li>Item 20: distractor A (prop = .02).</li>
+</ul>
+<p>Earlier it was mentioned that a low overall selection proportion does not necessarily mean that the distractor is problematic. This is because the item may be an easy item, in which case low overall selection proportions are expected. Additionally, the distractor may be selected to a substantial degree by lower total score groups, but almost never selected by higher total score groups, resulting in a low overall selection proportion. Such distractors may still discriminate well, as indicated by the point-biserial correlations, even though they have a low overall selection proportion. Let us examine the potential non-functioning distractors with these considerations in mind.</p>
+<p>For item 1, Distractor A has a moderate negative point-biserial correlation (<span class="math inline">\(r_{pbis}=-.25\)</span>) with the selection proportions (.09, .05, .01, .00) in order from lowest to highest total score group. Since option A discriminates fairly well and is selected at a substantial frequency by lower total score groups, this distractor is likely unproblematic and does not require revision.</p>
+<p>For item 4, distractors A and B have moderate negative point-biserial correlations (<span class="math inline">\(r_{pbis}=-.27\)</span> and <span class="math inline">\(r_{pbis}=-.26\)</span>, respectively), but they are only selected at a substantial frequency by the lowest total score group, and are almost never selected by the other 3 groups. This suggests that distractors A and B are primarily selected due to chance guessing at low ability levels. Additionally, distractor C clearly dominates the response options, with the selection proportions (.61, .60, .60, .33). The distractor functioning indicates that this item is essentially dichotomous, and is consistent with the context found in the item stem, which essentially asks whether a homeostatic control mechanism is always functioning (option D) or if it only activates in certain scenarios (option C).</p>
+<p>For item 9, distractor C has a moderate negative point-biserial correlation (<span class="math inline">\(r_{pbis}=-.23\)</span>) but is essentially only selected by the lowest total score group (.06, .00, .00, .00). This suggests that distractor C is primarily selected due to chance guessing at low ability levels and may require revision.</p>
+<p>For item 12, distractor B has a weak negative point-biserial correlation (<span class="math inline">\(r_{pbis}=-.14\)</span>) and is essentially only selected by the lowest total score group (.03, .01, .01, .01), and distractor C has a moderate negative point-biserial correlation (<span class="math inline">\(r_{pbis}=-.21\)</span>) and is selected at a substantial frequency in the lower total score groups (.07, .06, .03, .00). This suggests that distractor B may require revision, but distractor C is likely unproblematic.</p>
+<p>For item 20, distractor A has a weak negative point-biserial correlation (<span class="math inline">\(r_{pbis}=-.19\)</span>) and is essentially only selected by the lowest total score group (.05, .01, .00, .00). This suggests that distractor A is primarily selected due to chance guessing at low ability levels and may require revision. Additionally, this item is structurally similar to item 4, with the distractor functioning and item stem indicating that the item is essentially dichotomous.</p>
+<p>An additional point worth noting is that some distractors (notably in item 15 and item 17) have a trendline which is peaked around the middle total score range. This suggests that these distractors are of a different type compared to those which trend downwards monotonically; rather than affecting lower ability individuals the most, individuals need to be at a certain ability level to possess the partial understanding required for these distractors to function. These distractors are not necessarily problematic and could be useful and informative. However, the functioning of these distractors is inconclusive under classical distractor analyses. More sophisticated methods, such as item response theory (IRT) approaches using the nominal response model (NRM), may better explain the functioning of these distractors.</p>
+<p><em>In conclusion, the classical distractor analysis suggests that the distractors are functioning well in general. Item 9 (distractor C) and item 12 (distractor B) are infrequently selected and are essentially only selected by the group with the lowest 25% of total scores, which suggests that these distractors may be non-functioning and may benefit from revision. Additionally, the distractor functioning for item 4 and item 20 suggests that these items are essentially dichotomous, which is consistent with the context found in the item stems. These distractors may benefit from revision, or they may be retained as is, since these items still provide useful information about test-takers.</em></p>
 <hr>
 </section>
 <section id="dimensionality-analysis" class="level2">

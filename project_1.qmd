@@ -44,7 +44,7 @@ hist(total_scores)
 describe(total_scores)
 ```
 
-Overall, the total score distribution looks healthy. The mean of 12.13 indicates that the average student scored roughly 60.7%, which suggests that the difficulty of the test is well-aligned with the target population. The skewness of -0.17 is very small and indicates no ceiling or floor effects. The kurtosis of -0.68 indicates that the distribution is slightly platykurtic (flatter peak/thinner tails), which is desirable for differentiating students across the middle range of the score distribution. Lastly, the histogram and the standard deviation of 3.65 suggests that there is sufficient variation in the total scores. 
+*Overall, the total score distribution looks healthy. The mean of 12.13 indicates that the average student scored roughly 60.7%, which suggests that the difficulty of the test is well-aligned with the target population. The skewness of -0.17 is very small and indicates no ceiling or floor effects. The kurtosis of -0.68 indicates that the distribution is slightly platykurtic (flatter peak/thinner tails), which is desirable for differentiating students across the middle range of the score distribution. Lastly, the histogram and the standard deviation of 3.65 suggests that there is sufficient variation in the total scores.*
 
 ---
 
@@ -81,9 +81,11 @@ CTT_results <- data.frame(
 CTT_results
 ```
 
-Notably, item QR17 has very low discrimination (RIR = .049) as well as being a challenging item (*p* = .291). This indicates that item QR17 is highly problematic, since individuals who correctly answered the item were not meaningfully more likely to have a higher total score. This is consistent with item QR17 having an alpha-if-dropped of 0.725, which is higher than the overall coefficient alpha estimate. Thus, item QR17 is recommended for revision. 
+Notably, item 17 has very low discrimination (RIR = .049) as well as being a challenging item (*p* = .291). This indicates that item 17 is highly problematic, since individuals who correctly answered the item were not meaningfully more likely to have a higher total score. This is consistent with item QR17 having an alpha-if-dropped of 0.725, which is higher than the overall coefficient alpha estimate. Thus, item 17 is recommended for revision. 
 
-Additionally, item QR7 (*p* = .541, RIR = .106, $\alpha_{drop}$ = .722) and item QR4 (*p* = .399, RIR = .177, $\alpha_{drop}$ = .715) have low discrimination which is not attributable to floor or ceiling effects. Thus, these two items may also warrant revision. 
+Additionally, item 7 (*p* = .541, RIR = .106, $\alpha_{drop}$ = .722) and item 4 (*p* = .399, RIR = .177, $\alpha_{drop}$ = .715) have low discrimination which is not attributable to floor or ceiling effects. Thus, these two items may also warrant revision. 
+
+*In conclusion, the classical reliability analysis suggests that the internal consistency of the total scores likely falls within the "acceptable" range according to the recommendations of Nunnally & Bernstein (1994). Furthermore, the difference between the coefficient alpha and the ordinal alpha suggests that there is meaningful information loss from dichotomous scoring. Additionally, the classical item analysis suggests that item 17, item 7, and item 4 have poor discrimination and may benefit from revision, in order of importance.*
 
 ---
 
@@ -92,17 +94,20 @@ Additionally, item QR7 (*p* = .541, RIR = .106, $\alpha_{drop}$ = .722) and item
 Before performing distractor analysis, there is a minor issue with the `HCIdata` dataset that needs to be corrected. Item 5 (A5) should have four response options (A/B/C/D). However, looking at the dataset, two entries have been incorrectly coded as lowercase "c" rather than uppercase "C", resulting in the variable having 5 factor levels (A/B/C/c/D). This can be easily corrected using the `fct_recode()` function in the `{forcats}` package, which is part of the tidyverse family of R packages. 
 
 ```{r}
+## Load the forcats package
 library(forcats)
+
+## Correct the data entry issue for item 5
 items_unscored$A5 <- fct_recode(items_unscored$A5, "C" = "c")
 ```
 
 Now the two factor levels have been merged. Looking at the dataset, item A5 now has 4 factor levels (A/B/C/D), which is correct. Note that not all items have 4 factor levels; the majority have either 3 or 4 factor levels, with a few items having 5 factor levels. There are no additional issues with the dataset, so we may proceed with distractor analysis. 
 
-Distractor analysis may be divided into "classical" and "model-based" approaches. This section covers classical distractor analysis, while a later section will cover model-based approaches such as the nominal response model (NRM). Classical distractor analysis primarily involves examining statistics such as the proportions of test-takers who select each distractor, the mean of the total scores for all test-takers who select each distractor, and the point-biserial or biserial correlations between each distractor and the total scores. The primary goal of classical distractor analysis is to guide item development by identifying non-functioning or non-discriminating distractors.
+Distractor analysis may be divided into "classical" and "model-based" approaches. This section covers classical distractor analysis, while a later section will cover model-based approaches such as the nominal response model (NRM). Classical distractor analysis primarily involves examining statistics such as the proportions of test-takers who select each distractor and the point-biserial or biserial correlations between each distractor and the total scores. The primary goal of classical distractor analysis is to guide item development by identifying non-functioning or non-discriminating distractors.
 
 Non-functioning distractors are distractors which are selected by a very low percentage of test-takers. A common rule-of-thumb is that distractors which are selected by less than 5% of test-takers are non-functioning. However, an exception to this rule can be made for very easy items. For instance, for a multiple-choice item in which 85% of test-takers chose the correct answer, it is likely that many of the distractors would be considered non-functioning under the 5% rule. However, such distractors are not necessarily problematic, and such items can still have good discrimination and be useful for content coverage purposes. 
 
-Non-discriminating distractors are distractors which are equally likely to be selected across the total score range. Good distractors test for misconceptions which are more common in test-takers with a lower total score. As total score increases, test-takers are expected to not have as many misconceptions, and thus should be less likely to select the distractors. If a distractor is roughly equally likely to be selected by all test-takers, no matter their total score, then this suggests that the functioning of the distractor may be unrelated to the construct of interest. For instance, the distractor may be selected due to confusing language or an unintentional cue in the item stem. 
+Non-discriminating distractors are distractors which are equally likely to be selected across the total score range. Good distractors test for misconceptions which are more common in test-takers with a lower total score. As total score increases, test-takers are expected to not have as many misconceptions, and thus should be less likely to select the distractors. If a distractor is roughly equally likely to be selected by all test-takers, no matter their total score, then this suggests that the functioning of the distractor may be unrelated to the construct of interest. For instance, the distractor may be selected due to confusing language or an unintentional cue in the item stem. Typically, the non-discriminating distractors of interest are those which are not also non-functioning, otherwise they would be simply considered non-functioning. 
 
 An effective and efficient way to screen for non-functioning and non-discriminating distractors is to examine *trace plots*, which are also called *distractor plots*. Distractor plots can be created using the `plotDistractorAnalysis()` function in the `{ShinyDataAnalysis}` package. To make the plots look a little nicer, the `{ggplot2}` and `{patchwork}` packages are also used. 
 
@@ -130,11 +135,9 @@ for (i in seq_along(distractor_plots)) {
                                   B = "green",
                                   C = "cyan",
                                   D = "blue",
-                                  E = "magenta")
-                       ) +
+                                  E = "magenta")) +
     scale_y_continuous(breaks = seq(0, 1, by = 0.1),
-                       limits = c(0, 1)
-                       )
+                       limits = c(0, 1))
                                         }
 ```
 
@@ -147,12 +150,13 @@ To understand the elements of a distractor plot, let us examine the distractor p
 distractor_plots$A1
 ```
 
-Now let's examine the distractor plots for all 20 items. The plots are neatly summarized into a single mosaic plot. The legends and axis titles are omitted for visual clarity; all plots within the mosaic use the same coloring scheme described in the code above. 
+Now let's examine the distractor plots for all 20 items. The plots are neatly summarized into a single multi-panel figure. The legends and axis titles are omitted for visual clarity; all plots within the mosaic use the same coloring scheme described in the code above. 
 
 ```{r}
 #| fig-height: 15
 #| out-width: "125%"
 
+## Combine all plots into a multi-panel figure
 wrap_plots(distractor_plots, ncol = 4) & 
   theme(
     plot.title = element_text(size = 7),
@@ -162,7 +166,84 @@ wrap_plots(distractor_plots, ncol = 4) &
         )
 ```
 
+Numerical values for the selection proportions, as well as additional statistics such as the sample size for each response option and the point-biserial correlations between each response option and the total scores, are a useful supplement to the distractor plots. The `DistractorAnalysis()` function in the `{ShinyItemAnalysis}` package will provide the selection proportions by group, but it does not provide the additional statistics. Thus, I prefer the `{CTT}` package which has a very similar function called `distractorAnalysis()`. In fact, the function in the `{ShinyItemAnalysis}` package is a modified version of the function in the `{CTT}` package, so the underlying code is very similar. 
 
+```{r}
+#| message: false
+
+## Load the CTT package
+library(CTT)
+
+## Compute distractor statistics
+DA_CTT <- distractorAnalysis(
+                items = items_unscored,
+                key = HCIkey,
+                nGroups = 4,
+                validResp = "fromItem",
+                pTable = TRUE,
+                digits = 2
+                             )
+DA_CTT
+```
+
+Now that the distractor plots and statistics for all 20 items are computed, let us examine the items for any issues with distractor functioning. First, a cursory glance at the distractor plots provides a useful overall picture of distractor functioning. Here are some useful guidelines when examining distractor plots:
+
+1. The correct option (solid line) should trend upwards.
+2. The distractors (dashed lines) should trend downwards.
+3. The highest total score group should not have any distractors which are selected more frequently than the correct option. 
+4. Flat trendlines suggest non-discriminating distractors. 
+5. Very low proportion trendlines suggest non-functioning distractors.  
+
+An example of an easy but well-discriminating item is item 3 (*p* = .848, RIR = .344). The correct option trends upwards, the distractors trend downwards, and the distractors are selected at a substantial proportion among lower total score groups. 
+
+```{r}
+#| fig-height: 5
+#| fig-width: 4
+
+distractor_plots$A3
+```
+
+An example of a difficult but well-discriminating item is item 6 (*p* = .359, RIR = .345). The correct option trends upwards, the distractors trend downwards, and the distractors are selected at a substantial proportion among lower total score groups. Since this item is quite difficult, we see that lower total score groups are much more likely to select the distractor option B, and that option B retains a substantial proportion even at higher total score groups. 
+
+```{r}
+#| fig-height: 5
+#| fig-width: 4
+
+distractor_plots$A6
+```
+
+An example of a non-functioning distractor can be found in item 12 (*p* = .577, RIR = .300). We see that distractor option B (green) is almost never selected, even in the lowest total score group. The exact proportions according to the table above are (.03, .01, .01, .01) for the 4 groups, from lowest to highest total score. 
+
+```{r}
+#| fig-height: 5
+#| fig-width: 4
+
+distractor_plots$A12
+```
+
+Overall, the classical distractor analysis indicates that there are relatively few problematic distractors. There are a few potentially non-functional distractors, but there are no clearly non-discriminating distractors. This is expected since the instrument was developed with distractor functioning in mind. Based on overall selection proportions, the potential non-functioning distractors include:
+
+- Item 1: distractor A (prop = .04).
+- Item 4: distractors A (prop = .03) and B (prop = .03). 
+- Item 9: distractor C (prop = .02).
+- Item 12: distractors B (prop = .02) and C (prop = .04). 
+- Item 20: distractor A (prop = .02). 
+
+Earlier it was mentioned that a low overall selection proportion does not necessarily mean that the distractor is problematic. This is because the item may be an easy item, in which case low overall selection proportions are expected. Additionally, the distractor may be selected to a substantial degree by lower total score groups, but almost never selected by higher total score groups, resulting in a low overall selection proportion. Such distractors may still discriminate well, as indicated by the point-biserial correlations, even though they have a low overall selection proportion. Let us examine the potential non-functioning distractors with these considerations in mind.
+
+For item 1, Distractor A has a moderate negative point-biserial correlation ($r_{pbis}=-.25$) with the selection proportions (.09, .05, .01, .00) in order from lowest to highest total score group. Since option A discriminates fairly well and is selected at a substantial frequency by lower total score groups, this distractor is likely unproblematic and does not require revision. 
+
+For item 4, distractors A and B have moderate negative point-biserial correlations ($r_{pbis}=-.27$ and $r_{pbis}=-.26$, respectively), but they are only selected at a substantial frequency by the lowest total score group, and are almost never selected by the other 3 groups. This suggests that distractors A and B are primarily selected due to chance guessing at low ability levels. Additionally, distractor C clearly dominates the response options, with the selection proportions (.61, .60, .60, .33). The distractor functioning indicates that this item is essentially dichotomous, and is consistent with the context found in the item stem, which essentially asks whether a homeostatic control mechanism is always functioning (option D) or if it only activates in certain scenarios (option C). 
+
+For item 9, distractor C has a moderate negative point-biserial correlation ($r_{pbis}=-.23$) but is essentially only selected by the lowest total score group (.06, .00, .00, .00). This suggests that distractor C is primarily selected due to chance guessing at low ability levels and may require revision. 
+
+For item 12, distractor B has a weak negative point-biserial correlation ($r_{pbis}=-.14$) and is essentially only selected by the lowest total score group (.03, .01, .01, .01), and distractor C has a moderate negative point-biserial correlation ($r_{pbis}=-.21$) and is selected at a substantial frequency in the lower total score groups (.07, .06, .03, .00). This suggests that distractor B may require revision, but distractor C is likely unproblematic.
+
+For item 20, distractor A has a weak negative point-biserial correlation ($r_{pbis}=-.19$) and is essentially only selected by the lowest total score group (.05, .01, .00, .00). This suggests that distractor A is primarily selected due to chance guessing at low ability levels and may require revision. Additionally, this item is structurally similar to item 4, with the distractor functioning and item stem indicating that the item is essentially dichotomous. 
+
+An additional point worth noting is that some distractors (notably in item 15 and item 17) have a trendline which is peaked around the middle total score range. This suggests that these distractors are of a different type compared to those which trend downwards monotonically; rather than affecting lower ability individuals the most, individuals need to be at a certain ability level to possess the partial understanding required for these distractors to function. These distractors are not necessarily problematic and could be useful and informative. However, the functioning of these distractors is inconclusive under classical distractor analyses. More sophisticated methods, such as item response theory (IRT) approaches using the nominal response model (NRM), may better explain the functioning of these distractors. 
+
+*In conclusion, the classical distractor analysis suggests that the distractors are functioning well in general. Item 9 (distractor C) and item 12 (distractor B) are infrequently selected and are essentially only selected by the group with the lowest 25% of total scores, which suggests that these distractors may be non-functioning and may benefit from revision. Additionally, the distractor functioning for item 4 and item 20 suggests that these items are essentially dichotomous, which is consistent with the context found in the item stems. These distractors may benefit from revision, or they may be retained as is, since these items still provide useful information about test-takers.*
 
 ---
 

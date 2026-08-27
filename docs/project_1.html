@@ -221,6 +221,7 @@ window.Quarto = {
   <li><a href="#dataset-preparation-and-preliminary-inspection" id="toc-dataset-preparation-and-preliminary-inspection" class="nav-link" data-scroll-target="#dataset-preparation-and-preliminary-inspection">Dataset Preparation and Preliminary Inspection</a></li>
   <li><a href="#classical-reliability-and-item-analysis" id="toc-classical-reliability-and-item-analysis" class="nav-link" data-scroll-target="#classical-reliability-and-item-analysis">Classical Reliability and Item Analysis</a></li>
   <li><a href="#classical-distractor-analysis" id="toc-classical-distractor-analysis" class="nav-link" data-scroll-target="#classical-distractor-analysis">Classical Distractor Analysis</a></li>
+  <li><a href="#optimal-scaling" id="toc-optimal-scaling" class="nav-link" data-scroll-target="#optimal-scaling">Optimal Scaling</a></li>
   <li><a href="#dimensionality-analysis" id="toc-dimensionality-analysis" class="nav-link" data-scroll-target="#dimensionality-analysis">Dimensionality Analysis</a></li>
   </ul>
 </nav>
@@ -644,6 +645,187 @@ D       *   D 480 0.72  0.34    0.46  0.48  0.74  0.84  0.94</code></pre>
 <p>For item 20, distractor A has a weak negative point-biserial correlation (<span class="math inline">\(r_{pbis}=-.19\)</span>) and is essentially only selected by the lowest total score group (.05, .01, .00, .00). This suggests that distractor A is primarily selected due to chance guessing at low ability levels and may require revision. Additionally, this item is structurally similar to item 4, with the distractor functioning and item stem indicating that the item is essentially dichotomous.</p>
 <p>An additional point worth noting is that some distractors (notably in item 15 and item 17) have a trendline which is peaked around the middle total score range. This suggests that these distractors are of a different type compared to those which trend downwards monotonically; rather than affecting lower ability individuals the most, individuals need to be at a certain ability level to possess the partial understanding required for these distractors to function. These distractors are not necessarily problematic and could be useful and informative. However, the functioning of these distractors is inconclusive under classical distractor analyses. More sophisticated methods, such as item response theory (IRT) approaches using the nominal response model (NRM), may better explain the functioning of these distractors.</p>
 <p><em>In conclusion, the classical distractor analysis suggests that the distractors are functioning well in general. Item 9 (distractor C) and item 12 (distractor B) are infrequently selected and are essentially only selected by the group with the lowest 25% of total scores, which suggests that these distractors may be non-functioning and may benefit from revision. Additionally, the distractor functioning for item 4 and item 20 suggests that these items are essentially dichotomous, which is consistent with the context found in the item stems. These distractors may benefit from revision, or they may be retained as is, since these items still provide useful information about test-takers.</em></p>
+<hr>
+</section>
+<section id="optimal-scaling" class="level2">
+<h2 class="anchored" data-anchor-id="optimal-scaling">Optimal Scaling</h2>
+<p>Thus far, the items have been dichotomously scored by assigning each correct option a score of 1 and each incorrect option a score of 0. However, it is likely that some information is lost by dichotomous scoring. This is because dichotomous scoring treats each incorrect option as having equal value, which is unlikely since the distractors differ in their quality, as seen in the classical distractor analysis above. An alternative is to use <em>optimal scaling</em>, which describes a set of data-driven approaches that assign different scores to each response option by optimizing for some statistical criterion.</p>
+<p>A common statistical criterion is to choose scores which maximize the sum of item correlations (the entries in the item correlation matrix). This is equivalent to maximizing the coefficient alpha of the instrument. The <code>corAspect()</code> function in the <code>{aspect}</code> package (Mair &amp; de Leeuw, 2010) can be used to perform optimal scaling. By default, the <code>corAspect()</code> function optimizes for the sum of item correlations (<code>aspect = "aspectSum"</code>) and assumes that the variables are nominal (<code>level = "nominal"</code>).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Load the aspect package</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aspect)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Optimizing for the sum of item correlations (and thus coefficient alpha)</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>opt_alpha <span class="ot">&lt;-</span> <span class="fu">corAspect</span>(items_unscored, <span class="at">aspect =</span> <span class="st">"aspectSum"</span>, <span class="at">level =</span> <span class="st">"nominal"</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Examining the output (rounded to 2 decimal places)</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(opt_alpha<span class="sc">$</span>eigencor, <span class="dv">2</span>) <span class="co"># Eigenvalues of the correlation matrix</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 3.86 1.30 1.22 1.11 1.07 0.96 0.93 0.90 0.88 0.84 0.83 0.81 0.77 0.74 0.72
+[16] 0.67 0.66 0.63 0.57 0.52</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(opt_alpha<span class="sc">$</span>catscores, round, <span class="dv">2</span>) <span class="co"># Optimal scores for each item</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$A1
+  score
+A -2.47
+B -0.23
+C -1.69
+D  0.60
+
+$A2
+  score
+A -2.23
+B  0.54
+C -0.74
+
+$A3
+  score
+A  0.41
+B -2.91
+C -1.77
+
+$A4
+  score
+A -4.52
+B -3.44
+C -0.01
+D  0.56
+
+$A5
+  score
+A -1.19
+B  1.10
+C -1.14
+D -0.64
+
+$A6
+  score
+A -2.01
+B -0.46
+C  1.21
+
+$A7
+  score
+A -2.25
+B -0.49
+C  0.79
+
+$A8
+  score
+A -1.38
+B -1.73
+C  0.65
+
+$A9
+  score
+A -0.08
+B -2.24
+C -4.39
+D  0.71
+
+$A10
+  score
+A  0.74
+B -1.17
+C -1.49
+
+$A11
+  score
+A  0.50
+B -2.72
+C -1.04
+
+$A12
+  score
+A -1.49
+B -2.13
+C -2.11
+D  0.80
+E -0.69
+
+$A13
+  score
+A  0.79
+B -1.83
+C -1.35
+D -0.78
+
+$A14
+  score
+A  0.55
+B -1.41
+C -1.30
+D -2.53
+
+$A15
+  score
+A -1.03
+B -1.37
+C  0.97
+D  0.19
+
+$A16
+  score
+A  0.77
+B -1.01
+C -2.07
+D -0.51
+
+$A17
+  score
+A  1.00
+B -1.55
+C  0.34
+D  0.14
+
+$A18
+  score
+A -1.93
+B -1.87
+C  0.52
+D -2.11
+
+$A19
+  score
+A -1.83
+B -2.13
+C  0.53
+D -1.31
+E -2.03
+
+$A20
+  score
+A -3.23
+B -2.65
+C -0.92
+D  0.56</code></pre>
+</div>
+</div>
+<p>Additionally, the total scores based on optimal scores can be computed, and the relationship between the total scores can be examined by computing the correlation and creating a scatterplot.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Compute optimal total scores</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>total_scores_opt <span class="ot">&lt;-</span> <span class="fu">unname</span>(<span class="fu">rowSums</span>(opt_alpha<span class="sc">$</span>scoremat))</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Compare optimal and dichotomous total scores</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">cor</span>(total_scores, total_scores_opt), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(total_scores, total_scores_opt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="project_1_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now let us interpret the results of the optimal scaling procedure. Looking at the eigenvalues, we see that there the first eigenvalue (3.86) is much larger than subsequent eigenvalues (1.30, 1.22, 1.11, …). This suggests that the dataset is unidimensional. Additional dimensionality checks will be performed in a later section.</p>
+<p>Looking at the optimal scores (category scores) for each item, we see that, in general, the positive values are quite modest (~0.50 to ~1.10), while the negative values can be quite extreme (e.g.&nbsp;-4.52). This is because distractors which are selected very infrequently can have inflated scores due to having very small sample sizes for those groups.</p>
+<p>Furthermore, we see that, in general, the correct option has the most positive value. The only exception to this is item 17, in which the correct answer C is given an optimal score of 0.34, while the distractor A has a higher score of 1.00. This suggests that individuals who selected the distractor tended to do better on the other 19 items compared to individuals who selected the correct answer. This suggests that item 17 is problematic.</p>
+<p>Additionally, the correlation between the total scores using dichotomous or optimal scoring is around 0.95, which suggests that the two scoring methods agree on about 90% of the variance in how individuals are rank-ordered. This suggests that there is not much to be gained from optimal scoring.</p>
+<p><em>In conclusion, the results of the optimal scoring procedure suggests that (1) item 17 is problematic, since the distractor option A was given a higher score (1.00) than the correct answer C (0.34), (2) not much is gained from optimal scoring, since the correlation between the total scores using both scoring approaches is around 0.95, which suggests a shared variance of around 90%, and (3) the data is unidimensional, since there is one dominant eigenvalue.</em></p>
 <hr>
 </section>
 <section id="dimensionality-analysis" class="level2">

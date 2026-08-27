@@ -247,6 +247,47 @@ An additional point worth noting is that some distractors (notably in item 15 an
 
 ---
 
+## Optimal Scaling
+
+Thus far, the items have been dichotomously scored by assigning each correct option a score of 1 and each incorrect option a score of 0. However, it is likely that some information is lost by dichotomous scoring. This is because dichotomous scoring treats each incorrect option as having equal value, which is unlikely since the distractors differ in their quality, as seen in the classical distractor analysis above. An alternative is to use *optimal scaling*, which describes a set of data-driven approaches that assign different scores to each response option by optimizing for some statistical criterion. 
+
+A common statistical criterion is to choose scores which maximize the sum of item correlations (the entries in the item correlation matrix). This is equivalent to maximizing the coefficient alpha of the instrument. The `corAspect()` function in the `{aspect}` package (Mair & de Leeuw, 2010) can be used to perform optimal scaling. By default, the `corAspect()` function optimizes for the sum of item correlations (`aspect = "aspectSum"`) and assumes that the variables are nominal (`level = "nominal"`). 
+
+```{r}
+## Load the aspect package
+library(aspect)
+
+## Optimizing for the sum of item correlations (and thus coefficient alpha)
+opt_alpha <- corAspect(items_unscored, aspect = "aspectSum", level = "nominal")
+
+## Examining the output (rounded to 2 decimal places)
+round(opt_alpha$eigencor, 2) # Eigenvalues of the correlation matrix
+lapply(opt_alpha$catscores, round, 2) # Optimal scores for each item
+```
+
+Additionally, the total scores based on optimal scores can be computed, and the relationship between the total scores can be examined by computing the correlation and creating a scatterplot. 
+
+```{r}
+## Compute optimal total scores
+total_scores_opt <- unname(rowSums(opt_alpha$scoremat))
+
+## Compare optimal and dichotomous total scores
+round(cor(total_scores, total_scores_opt), 2)
+plot(total_scores, total_scores_opt)
+```
+
+Now let us interpret the results of the optimal scaling procedure. Looking at the eigenvalues, we see that there the first eigenvalue (3.86) is much larger than subsequent eigenvalues (1.30, 1.22, 1.11, ...). This suggests that the dataset is unidimensional. Additional dimensionality checks will be performed in a later section. 
+
+Looking at the optimal scores (category scores) for each item, we see that, in general, the positive values are quite modest (~0.50 to ~1.10), while the negative values can be quite extreme (e.g. -4.52). This is because distractors which are selected very infrequently can have inflated scores due to having very small sample sizes for those groups. 
+
+Furthermore, we see that, in general, the correct option has the most positive value. The only exception to this is item 17, in which the correct answer C is given an optimal score of 0.34, while the distractor A has a higher score of 1.00. This suggests that individuals who selected the distractor tended to do better on the other 19 items compared to individuals who selected the correct answer. This suggests that item 17 is problematic. 
+
+Additionally, the correlation between the total scores using dichotomous or optimal scoring is around 0.95, which suggests that the two scoring methods agree on about 90% of the variance in how individuals are rank-ordered. This suggests that there is not much to be gained from optimal scoring. 
+
+*In conclusion, the results of the optimal scoring procedure suggests that (1) item 17 is problematic, since the distractor option A was given a higher score (1.00) than the correct answer C (0.34), (2) not much is gained from optimal scoring, since the correlation between the total scores using both scoring approaches is around 0.95, which suggests a shared variance of around 90%, and (3) the data is unidimensional, since there is one dominant eigenvalue.*
+
+---
+
 ## Dimensionality Analysis
 
 TBD

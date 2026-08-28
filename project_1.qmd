@@ -12,7 +12,7 @@ The goal of this project is to analyze data collected from a multiple-choice ach
 
 In this project, we will be analyzing the *Homeostasis Concept Inventory* (HCI) (McFarland et al., 2017), which is a 20-item multiple-choice test designed to measure undergraduate students' understanding of the homeostasis concept. The HCI was developed through an iterative process which involved identifying common student misconceptions through think-aloud interviews and expert feedback, and developing distractors based on these misconceptions. 
 
-The dataset `HCIdata` is part of the `{ShinyItemAnalysis}` R package (Martinková & Drabinová, 2018) and contains N=669 observations which were collected as part of the validation process for the final version of the HCI (McFarland et al., 2017). Notably, the dataset contains both the scored and unscored item responses, which allows for distractor analysis, as well as matching variables such as gender and minority membership, which allows for differential item and distractor functioning (DIF and DDF) analyses. 
+The dataset `HCIdata` is part of the `{ShinyItemAnalysis}` R package (Martinková & Drabinová, 2018) and contains N=669 observations which were collected as part of the validation process for the final version of the HCI (McFarland et al., 2017). Notably, the dataset contains both the scored and unscored item responses, which allows for distractor analysis, as well as matching variables such as gender and minority membership, which allows for differential item functioning (DIF) analyses. 
 
 The `HCIdata` dataset contains 49 variables. The first 20 variables (1-20) are the unscored item responses which are recorded as A/B/C/D. The next 20 variables (21-40) are the scored item responses which are recorded as 0/1. The next variable (41) is the total/sum score. The last 8 variables (42-49) are demographic variables including gender, plans to major in the life sciences, class level/year in college, ethnicity, minority membership, English as the student's first language, course type, and type of school. A complete description of this dataset can be found in the documentation for the `{ShinyItemAnalysis}` package (Martinková & Drabinová, 2018) and additional information can also be found in the validation study for the HCI (McFarland et al., 2017).
 
@@ -290,23 +290,155 @@ Additionally, the correlation between the total scores using dichotomous or opti
 
 ## Dimensionality Analysis
 
-TBD
+The dimensionality of the dataset can be examined using factor analysis. Before performing factor analysis, the Kaiser-Meyer-Olkin (KMO) index is a useful measure of how well-suited a dataset is for factor analysis. Here, the KMO index is calculated using the tetrachoric correlation matrix rather than the raw item responses (Pearson correlations), which is more appropriate since the items are dichotomously scored but are hypothesized to reflect an underlying continuous attribute. In fact, using Pearson correlations results in a slightly higher KMO index, but it is not shown here. 
+
+```{r}
+KMO(tetra$rho)
+```
+
+The overall MSA is 0.78, which is acceptable but not particularly strong. Kaiser and Rice (1974) suggested that the overall MSA should exceed .50 as a bare minimum for a correlation matrix to be suitable for factor analysis. The overall MSA is lowered by a few items with low individual MSAs: item 17 (.40), item 7 (.62), item 4 (.63), and item 9 (.63). 
+
+Next, the number of factors can be determined using parallel analysis. Parallel analysis compares the eigenvalues from the actual dataset against eigenvalues from simulated/resampled datasets of the same size. The idea is that a "real" factor should explain more variance than would be expected from chance alone. 
+
+```{r}
+#| fig-height: 8
+
+fa.parallel(items_scored, fm = "ml", cor = "tet")
+```
+
+The parallel analysis results suggest that there are 7 factors and 3 components. PCA analyzes total variance in each variable, so PCA eigenvalues tend to be larger and drop off faster. FA analyzes only the common variance between variables, so FA eigenvalues tend to be smaller and drop off more gradually. In this case, both results suggest that the dataset may have additional structure beyond a single construct. However, the eigenvalues clearly indicate that there is one dominant factor/component which is much larger than the others. This suggests that, even though additional factors may explain a significant amount of variance, the dataset is essentially unidimensional. 
+
+Next, we can fit EFA models with a different number of factors to compare their model fit. This will provide additional evidence about the dimensionality of the dataset. Since the parallel analysis suggested 3 components and 7 factors, all solutions up to 7 factors will be compared. 
+
+```{r}
+## Fit EFA models
+fit_fa_1 <- fa(items_scored, nfactors = 1, fm = "ml", cor = "tet")
+fit_fa_2 <- fa(items_scored, nfactors = 2, fm = "ml", cor = "tet")
+fit_fa_3 <- fa(items_scored, nfactors = 3, fm = "ml", cor = "tet")
+fit_fa_4 <- fa(items_scored, nfactors = 4, fm = "ml", cor = "tet")
+fit_fa_5 <- fa(items_scored, nfactors = 5, fm = "ml", cor = "tet")
+fit_fa_6 <- fa(items_scored, nfactors = 6, fm = "ml", cor = "tet")
+fit_fa_7 <- fa(items_scored, nfactors = 7, fm = "ml", cor = "tet")
+
+## Create a table with fit statistics rounded to 3 decimal places
+fit_fa_list <- list(f1 = fit_fa_1, 
+                    f2 = fit_fa_2, 
+                    f3 = fit_fa_3, 
+                    f4 = fit_fa_4,
+                    f5 = fit_fa_5,
+                    f6 = fit_fa_6,
+                    f7 = fit_fa_7)
+
+round(t(sapply(fit_fa_list, function(m) c(
+      chisq = m$STATISTIC,
+      df    = m$dof,
+      RMSEA = m$RMSEA[1],
+      RMSR  = m$rms,
+      TLI   = m$TLI,
+      BIC   = m$BIC
+      ))), 3)
+```
+
+We see that the fit indices all improve monotonically as the number of factors increases, which is to be expected. Interestingly, the Bayesian Information Criterion (BIC) favors the 6-factor solution. The BIC rewards better model fit but also penalizes for increased complexity. A more negative BIC indicates a better model fit given its degree of complexity. We see that the BIC drops sharply at the beginning and continues to decrease until it hits a minimum in the 6-factor solution, before increasing again with the 7-factor solution. However, the BIC is not a perfect indicator of which solution should be retained. It's a good idea to look at the factor loadings to see if they make sense. 
+
+```{r}
+print(fit_fa_6$loadings, cutoff = 0.2)
+```
+
+We see that a few items load almost exclusively on a single factor: item 14 (1.000), item 13 (.973), item 18 (.963), item 2 (.948), item 9 (.866). This is not a good sign and indicates that the data does not actually support having 6 factors. A few of the factors are likely just 1-2 items which have been treated as a factor. Let's look at the communalities for the items. 
+
+```{r}
+fit_fa_6$communalities
+```
+
+We see that a few items (13, 14, and 18) have communalities equal to exactly .995. These are likely *Heywood cases*, in which a communality reaches or exceeds 1.0. The `{psych}` package caps it at .995 to prevent it from actually exceeding 1.0, which would be an impossible value. Additionally, we see that some items have extremely low communalities: item 7 (.058) and item 17 (.041). Thus, the 6-factor solution is almost certainly incorrect. 
+
+Looking at the communalities for the other solutions, the 5-factor, 4-factor, 3-factor, and 2-factor solutions all contain at least 1 Heywood case. The 1-factor solution is also problematic, as some items have extremely low communalities: item 4 (.043), item 7 (.024), item 9 (.082), and item 17 (.003). These items are the same ones that had a low MSA when calculating the KMO index. 
+
+*In conclusion, the dimensionality of the instrument is inconclusive. EFA solutions with 1 to 7 factors were compared. The fit statistics improved monotonically as the number of factors increased and the BIC favored the 6-factor solution. However, examination of the factor loadings and communalities indicated that all solutions except for the 1-factor solution contained Heywood cases. Additionally, a few items (4, 7, 9, and 17) were consistently found to have extremely low communalities. This suggests that these items are problematic and may need to be removed before dimensionality can be accurately assessed. However, for the purposes of subsequent IRT analyses, the dataset may be treated as essentially unidimensional, since there is one clearly dominant factor.*
 
 ---
 
+## Item Response Theory Analysis
 
+The `{mirt}` package can be used to fit 1PL (Rasch), 2PL, and 3PL IRT models. 
 
+```{r}
+#| message: false
 
+## Load mirt package
+library(mirt)
 
+## Fit IRT models
+fit_1PL <- mirt(items_scored, model = 1, itemtype = "Rasch")
+fit_2PL <- mirt(items_scored, model = 1, itemtype = "2PL")
+fit_3PL <- mirt(items_scored, model = 1, itemtype = "3PL", 
+                  technical = list(NCYCLES = 2000))
+```
 
+We see that the 1PL (Rasch) and 2PL models converged quickly, but that the 3PL model took a large number of iterations (1372) to converge. This may be due to an insufficient sample size (N=669) for stable parameter estimates, and may indicate that the 3PL estimation is too unstable to be used. Let us examine the 3PL estimation further by looking at the item parameters. 
 
+```{r}
+round(coef(fit_3PL, IRTpars = TRUE, simplify = TRUE)$items, 2)
+```
 
+We see that some items have implausibly high discriminations: item 10 (3.66), item 13 (4.59), and item 14 (3.34). Furthermore, we also see that some items have implausibly low guessing parameters: item 2 (.03), item 4 (.01), item 5 (.01), item 6 (.10), item 7 (.01), item 8 (.00), item 9 (.00), item 18 (.00), item 19 (.10), and item 20 (.02). Thus, the 3PL estimation is likely too unstable to be used. We will proceed with the 1PL (Rasch) and 2PL models. 
 
+Next, the item parameters from the 1PL (Rasch) and 2PL models are summarized in the following table. 
 
+```{r}
+IRT_results <- data.frame(
+  b_1PL = round(coef(fit_1PL, IRTpars = TRUE, simplify = TRUE)$items[, "b"], 2),
+  b_2PL = round(coef(fit_2PL, IRTpars = TRUE, simplify = TRUE)$items[, "b"], 2),
+  a_2PL = round(coef(fit_2PL, IRTpars = TRUE, simplify = TRUE)$items[, "a"], 2)
+)
+IRT_results
+```
 
+Notably, item 17 has a very high difficulty (b = 7.40) and a very low discrimination (a = .12) under the 2PL model. This is the most clearly problematic item. 
 
+Looking at the item discriminations under the 2PL model, we see that there is a wide range of values (.12 to 1.80). Looking at the descriptive statistics below, we see that the item discriminations have a mean of .91 and a standard deviation of .42, which is a substantial amount of variation. This suggests that the equal-discrimination assumption underlying the 1PL (Rasch) model may be untenable for this dataset. 
 
+```{r}
+describe(coef(fit_2PL, IRTpars = TRUE, simplify = TRUE)$items[, "a"])
+```
 
+Now let us compare the fit of the 1PL (Rasch) and 2PL models. Since the models are nested, a likelihood ratio test (LRT) can be performed and relative model fit statistics can be obtained. Furthermore, absolute model fit statistics can be obtained by calculating the M2 index, which is specifically designed to compare IRT models. Additionally, item fit can be compared by calculating the S-X$^2$ statistics for each item. 
+
+```{r}
+## Relative fit statistics
+anova(fit_1PL, fit_2PL)
+
+## Absolute fit statistics
+M2(fit_1PL)
+M2(fit_2PL)
+
+## Item fit statistics
+itemfit(fit_1PL)
+itemfit(fit_2PL)
+```
+
+In terms of relative fit, the LRT is significant ($\chi^2$ = 179.33, df = 19, p < .001), which indicates that the more complex model (2PL) fits significantly better than the less complex model (1PL/Rasch). The information criteria all agree with this result, with the 2PL model having a lower AIC by about 141 points and a lower BIC by about 56 points. 
+
+In terms of absolute fit, the 2PL model fits better according to every statistic: the M2 is about 199 points lower for the 2PL model, the SRMSR for the 2PL is .047 (compared to .073 for the 1PL), and the TLI and CFI are .915 and .924, respectively. According to conventional guidelines (SRMSR < .05, TLI > .90, CFI > .90), the 2PL model has good fit, while the 1PL model has inadequate fit. 
+
+In terms of item fit, a significant result ($\alpha$ = .05) in the S-X$^2$ test indicates a misfitting item. Since the S-X$^2$ test is sensitive to sample size, it is also a good idea to look at the RMSEA for an effect size measure (conventional guideline is RMSEA < .05 indicates good fit). For the 1PL model, items 3, 4, 7, 9, 10, 13, 17, 18, and 19 show statistically significant misfit, and items 7 and 17 show practically significant misfit. For the 2PL model, items 10 and 13 show statistically significant misfit, and no items show practically significant misfit. Thus, the 2PL model has much better item fit than the 1PL (Rasch) model. 
+
+Next, let us check how well the local independence assumptions holds under both models. This can be done using Yen's Q3 statistic. 
+
+```{r}
+residuals(fit_1PL, type = "Q3")
+residuals(fit_2PL, type = "Q3")
+```
+
+The mean Q3 for the 1PL (Rasch) and 2PL models are -.037 and -.036, respectively, which are small. Additionally, the first and third quartiles are (-.078, -.002) for the 1PL (Rasch) model and (-.075, -.001) for the 2PL model. This indicates that, for the majority of items, there are no issues with local dependence. However, the large maximum values (.216 for the 1PL model and .245 for the 2PL model) indicate that there are item pairs with substantial dependence. To find the largest entries, the `suppress =` argument can be used to remove entries below a certain magnitude. A practical guideline is that a Q3 which is 0.20 above the mean should be flagged. 
+
+```{r}
+residuals(fit_1PL, type = "Q3", suppress = .20 - .037)
+residuals(fit_2PL, type = "Q3", suppress = .20 - .036)
+```
+
+For the 1PL model, we see that there is substantial dependence between item 4 and item 9, as well as between item 18 and item 19. For the 2PL model, we see that there is substantial dependence between item 4 and item 9, as well as between item 9 and item 20. The item stems for these item pairs may be worth examining for local dependence. 
 
 
 

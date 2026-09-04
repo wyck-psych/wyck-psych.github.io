@@ -2,59 +2,139 @@
 title: "Project 1 - Foundational Analyses using Multiple-Choice Response Data from an Achievement Test"
 toc: true
 format: html
+bibliography: references.bib
 ---
 
 ---
 
 ## Introduction
 
-The goal of this project is to analyze data collected from a multiple-choice achievement test. This data format is common within educational measurement, and contains one observation (row) per test-taker and one column per item, with each cell containing an unscored item response. 
+In this project, we will be analyzing the *Homeostasis Concept Inventory* (HCI) [@mcfarland2017], which is a 20-item multiple-choice test designed to measure undergraduate students' understanding of the homeostasis concept in physiology. The HCI was developed through an iterative process which involved identifying common student misconceptions through think-aloud interviews and expert feedback. Distractors were then developed based on these misconceptions.
 
-In this project, we will be analyzing the *Homeostasis Concept Inventory* (HCI) (McFarland et al., 2017), which is a 20-item multiple-choice test designed to measure undergraduate students' understanding of the homeostasis concept. The HCI was developed through an iterative process which involved identifying common student misconceptions through think-aloud interviews and expert feedback, and developing distractors based on these misconceptions. 
+The dataset `HCIdata` is part of the `{ShinyItemAnalysis}` R package [@ShinyItemAnalysis] and contains N=669 observations which were collected as part of the validation process for the final version of the HCI. Notably, the dataset contains the unscored item responses, which allows for distractor analysis, as well as matching variables such as gender and minority membership, which allows for differential item functioning (DIF) analyses.
 
-The dataset `HCIdata` is part of the `{ShinyItemAnalysis}` R package (Martinková & Drabinová, 2018) and contains N=669 observations which were collected as part of the validation process for the final version of the HCI (McFarland et al., 2017). Notably, the dataset contains both the scored and unscored item responses, which allows for distractor analysis, as well as matching variables such as gender and minority membership, which allows for differential item functioning (DIF) analyses. 
-
-The `HCIdata` dataset contains 49 variables. The first 20 variables (1-20) are the unscored item responses which are recorded as A/B/C/D. The next 20 variables (21-40) are the scored item responses which are recorded as 0/1. The next variable (41) is the total/sum score. The last 8 variables (42-49) are demographic variables including gender, plans to major in the life sciences, class level/year in college, ethnicity, minority membership, English as the student's first language, course type, and type of school. A complete description of this dataset can be found in the documentation for the `{ShinyItemAnalysis}` package (Martinková & Drabinová, 2018) and additional information can also be found in the validation study for the HCI (McFarland et al., 2017).
+The `HCIdata` dataset contains 49 variables. The first 20 variables (1-20) are the unscored item responses, which are recorded as capital letters (e.g. "A", "B", "C"). The next 20 variables (21-40) are the scored item responses which are recorded as "0" or "1". The next variable (41) is the total/sum score. The last 8 variables (42-49) are demographic variables including gender, plans to major in the life sciences, class level/year in college, ethnicity, minority membership, English as the student's first language, course type, and type of institution. A complete description of this dataset can be found in the documentation for the `{ShinyItemAnalysis}` package and additional information can also be found in the validation study for the HCI.
 
 ---
 
 ## Dataset Preparation and Preliminary Inspection
 
-First, the dataset and the required R packages were loaded into RStudio, and variables from the dataset were extracted to facilitate analysis. The dataset contained no missing values, so no treatment of missing values is needed. 
+The first step is to load the `{ShinyItemAnalysis}` package and the `HCIdata` dataset into RStudio. Next, subsets of variables from the dataset are extracted into new objects to make it easier to refer to them in subsequent analyses.
 
 ```{r}
 #| message: false
-### Load the dataset and required packages
+
+## Load the package and dataset
 library(ShinyItemAnalysis)
-library(psych)
 data("HCIdata")
 
-### Extract variables to facilitate analysis
+## Extract variables to facilitate analysis
 items_unscored <- HCIdata[ , 1:20]
 items_scored <- HCIdata[ ,21:40]
-total_scores <- HCIdata$total
 ```
 
-Before performing any analyses, a preliminary inspection of the total score distribution provides a useful overview of the instrument's performance and suitability for subsequent analyses. This can be done by examining a histogram and descriptive statistics of the total scores. Some key issues to look for include: excessive skewness (which indicates a floor or ceiling effect), multimodality (which may indicate multidimensionality or distinct subgroups in the sample), and insufficient variability in scores (which can attenuate or destabilize estimates due to restriction of range; this may be indicated by a large positive kurtosis). 
+Before performing any analyses, a preliminary inspection of the total score distribution provides a useful overview of the instrument's performance and suitability for subsequent analyses. This can be done by examining a histogram and descriptive statistics of the total scores. The `{psych}` package includes the `describe()` function which provides useful descriptive statistics, as well as other useful functions which will be used elsewhere in this project. Some key issues to look for include: excessive skewness (which indicates a floor or ceiling effect), multimodality (which may indicate multidimensionality or distinct subgroups in the sample), and insufficient variability in scores (which can attenuate or destabilize estimates due to restriction of range).
 
 ```{r}
 #| out-width: "75%"
 
-hist(total_scores)
-describe(total_scores)
+## Load the {psych} package
+library(psych)
+
+## Create a histogram and compute descriptive statistics
+hist(HCIdata$total)
+describe(HCIdata$total)
 ```
 
-*Overall, the total score distribution looks healthy. The mean of 12.13 indicates that the average student scored roughly 60.7%, which suggests that the difficulty of the test is well-aligned with the target population. The skewness of -0.17 is very small and indicates no ceiling or floor effects. The kurtosis of -0.68 indicates that the distribution is slightly platykurtic (flatter peak/thinner tails), which is desirable for differentiating students across the middle range of the score distribution. Lastly, the histogram and the standard deviation of 3.65 suggests that there is sufficient variation in the total scores.*
+&nbsp;
+
+***Key Takeaways**: Overall, the total score distribution appears healthy. The mean of 12.13 indicates that the average individual scored roughly 60.7%, which suggests that the difficulty of the test is well-aligned with the target population. The skewness of -0.17 is very small and indicates no ceiling or floor effects. The kurtosis of -0.68 indicates that the distribution is slightly platykurtic (flatter peak/thinner tails), which is desirable for differentiating students across the middle range of the score distribution. Lastly, the range of 17 and the standard deviation of 3.65 suggests that there is sufficient variation in the total scores.*
 
 ---
 
-## Classical Reliability and Item Analysis
+## Classical Reliability Analysis
 
-The internal consistency reliability of the composite scores may be estimated using the coefficient alpha based on Pearson correlations (Phi coefficients). Additionally, since the items are dichotomously scored but are hypothesized to reflect an underlying normally distributed attribute, it may be helpful to estimate the ordinal alpha based on tetrachoric correlations, which represents the hypothetical reliability of the underlying attribute scores. 
+The most common form of reliability that is analyzed in practice is *internal consistency*, which is typically estimated and reported using *Cronbach's alpha*. Internal consistency can be informally defined as the extent to which the items correlate with one another and thus appear to be measuring the same thing. This informal definition raises a natural question: *how is internal consistency a measure of reliability?* Internal consistency seems to be about the consistency of items within an instrument, while reliability seems to be about the consistency of scores obtained when repeated measures of the same instrument are taken. This raises a perhaps even more fundamental question: *how can the reliability of an instrument be meaningful without requiring repeated measures?*
 
-Both the Pearson correlation (Phi coefficient) and the tetrachoric correlation depend on the item difficulties. Both methods most accurately reflect the true linear relationship when the item difficulties are close to *p* = 0.5 (the mean of the underlying attribute distribution). When the item difficulties are closer to the extremes, the Phi coefficient is known to be attenuated (biased low), and the tetrachoric correlation remains unbiased but is less precise (larger standard errors). 
+These questions can be answered by examining the assumptions of the classical test theory (CTT) framework. The core component of the CTT framework is the *classical true score model*, which states that a *single* observed score $X$ can be decomposed into a true score and an error score:
 
-It is useful to report both the coefficient alpha and the ordinal alpha for two reasons. The first reason is the difference in interpretation, which was briefly mentioned above. The coefficient alpha is an estimate of the reliability of the *composite scores* and reflects the reliability of the instrument as it is operationally scored and used. The ordinal alpha is an estimate of the reliability of the *underlying attribute distribution*, which reflects the theoretical reliability of measurement if the underlying attribute could be measured without information loss from being dichotomously scored. The second reason for reporting both estimates is that the difference between the estimates itself provides useful diagnostic information. If the ordinal alpha is not much higher than the coefficient alpha, then this suggests that there is little information loss from dichotomous scoring. Conversely, a substantial gap suggests that the item set includes more extreme difficulty values, and that meaningful information is loss by dichotomous scoring. 
+$$X=T+E$$ 
+Where the true score $T$ is defined as the expectation of the hypothetical distribution of observed scores if the experiment could be independently replicated infinitely many times, which is sometimes called the *propensity definition* of the true score:
+
+$$T=E[X]$$
+
+From this definition of true score, it follows that the error score does not bias the true score and does not covary with the true score:
+
+$$E[E]=0$$
+$$Cov[T,E]=0$$
+This is because:
+
+$$E=X-T$$
+$$E[E]=E[X-T]$$
+$$=E[X]-E[T]$$
+$$=T-T$$
+$$=0$$
+
+The proof that $Cov[T,E]=0$ is more complicated and an abbreviated version is shown here.
+
+$$Cov[T,E]=E[TE]-E[T]E[E]$$
+$$\text{it can be shown that} \; E[TE]=0$$
+$$=0-T(0)$$
+$$=0$$
+
+It then follows that the variance of the observed scores can be decomposed into the true score variance and the error score variance:
+
+$$Var[X]=Var[T]+Var[E]$$
+
+This is because:
+
+$$Var[X]=Var[T+E]$$
+$$=Var[T]+Var[E]+2Cov[T,E]$$
+$$=Var[T]+Var[E]$$
+
+The reliability coefficient can then be defined conceptually as the ratio of the true score variance to the observed score variance:
+
+$$Rel[X] = Cor^2[X,T] = \frac{Var[T]}{Var[X]} = \frac{Var[T]}{Var[T]+Var[E]}$$
+
+The propensity definition of the true score and the conceptual definition of reliability are the two basic definitions of the classical true score model. However, in its current form, the classical true score model is very limited in its utility. The issue is that, as hinted at earlier, the model only explains a *single* measurement at a time, which could be a single item score or a single test score. In other words, the model can only explain a single random variable X at a time; there are no subscripts for X, T, or E. 
+
+This is a problem because there is, in fact, no way to estimate reliability under the classical true score model as defined thus far. The model is unidentified, since there is only one observed variable (X) and two unknowns (T and E). To resolve this issue, multiple measurements are needed, which may either be multiple item scores from one individual, or multiple test scores from a group of individuals. Given multiple measurements, the problem then becomes that of determining how the measurements need to relate to each other so that they can be combined in useful ways. 
+
+First, the assumption of *local independence* is almost always made. This assumption states that, given the true score(s), the observed scores are conditionally independent. Notably, this assumption provides the following useful result, which is that the errors between two distinct measurements do not covary. This result is very useful because many estimation methods used in CTT rely on the observed covariances between observed scores. These computations would be intractable if the covariances between error scores could not be set equal to zero.  
+
+$$Cov[E_i,E_j]=0, \; \text{for items} \; i \neq j$$
+
+Next, there are additional assumptions made about (1) how the true scores between measurements relate to each other, and (2) how the error variances between measurements relate to each other. Here, there are four sets of additional assumptions which are nested within each other: *parallel*, *tau-equivalent*, *essentially tau-equivalent*, and *congeneric* measurements.
+
+The assumption of parallel measurements states that all measurements have the same true score $T$ and the same error variance $\sigma^2_E$. The assumption of parallel measurements is the strictest because it implies that all measurements are fully interchangeable. Statistically, there is no way to tell them apart. Under these conditions, the CTT model becomes:
+
+$$X_i=T+E_i, \; \text{where} \; Var[E_i]=\sigma^2_E \; \text{for all} \; i$$
+
+The assumption of tau-equivalent measurements is slightly weaker by allowing the error variance to differ between measurements. The CTT model becomes:
+
+$$X_i=T+E_i, \; \text{where} \; Var[E_i] \; \text{can differ across i}$$
+
+The assumption of essentially tau-equivalent measurements is weaker still by allowing the true scores to differ from a common true score $T$ by some *additive constant* between measurements. The CTT model becomes:
+
+$$X_i=a_i+T+E_i, \; \text{where} \; Var[E_i] \; \text{can differ across i}$$
+
+Lastly, the assumption of congeneric measurements is the weakest by allowing the true scores to differ from a common true score $T$ by some *linear transformation* of $T$. The CTT model becomes: 
+
+$$X_i=a_i+\lambda_iT+E_i, \; \text{where} \; Var[E_i] \; \text{can differ across i}$$
+
+It can be shown that under the conditions of essential tau-equivalence or stricter, the internal consistency of measurements defined by Cronbach's alpha is equivalent to the reliability of measurement defined conceptually as the ratio of true score variance to observed score variance. Additionally, it can be shown that under the weaker conditions of congeneric measurements, Cronbach's alpha is a lower bound of the reliability of measurement. 
+
+To conclude the brief theoretical exposition, we see that the CTT framework makes additional assumptions beyond the classical true score model which makes it so that multiple measurements (either multiple item scores from the same individual or multiple test scores from a group of individuals) can be used to estimate the reliability of a test without requiring repeated measures. 
+
+The tradeoff for this nice theoretical result is that the assumptions of either essential tau-equivalence or congeneric measurements have to be tenable. If we claim that the measurements are essentially tau-equivalent, then we are saying that all items load equally on the underlying construct (analogous to equal discrimination). If this is unreasonable, then we may need to settle for congeneric measurements, in which case Cronbach's alpha only provides a lower bound for reliability. 
+
+Another important assumption underlying the use of Cronbach's alpha is that the variables are continuous. When the variables are dichotomous, the Pearson correlations used to calculate Cronbach's alpha are known to underestimate the true relationship between items which have different difficulty levels. Consequently, estimate of Cronbach's alpha is attenuated. 
+
+For the HCI, the item responses are hypothesized to reflect an underlying continuous variable (understanding of homeostasis), but the item responses have had an artificial structure imposed on them via dichotomous scoring. Thus, the assumption of continuous variables is violated, and Cronbach's alpha likely underestimates the true internal consistency of the instrument. The *ordinal alpha* based on *tetrachoric correlations* may be more appropriate here.
+
+Unlike the Pearson correlation, the tetrachoric correlation is not computed from the paired values directly. Rather, the tetrachoric correlation assumes that there is a normally distributed latent variable underlying each item. For each pair of items, the tetrachoric correlation is estimated from the observed 2×2 frequency table using the method of maximum likelihood. Thus, the tetrachoric correlation is itself a model which depends on assumptions.
+
+It is useful to report both the coefficient alpha and the ordinal alpha for two reasons. The first reason is the difference in interpretation. The coefficient alpha is an estimate of the internal consistency of the *composite scores* and reflects the internal consistency of the instrument as it is operationally scored and used. The ordinal alpha is an estimate of the internal consistency of the *underlying continuous variables*, which reflects the theoretical internal consistency of the instrument if the underlying attribute is normally distributed and could be measured without information loss from the items being dichotomously scored. The second reason for reporting both estimates is that the difference between the estimates itself provides useful diagnostic information. If the ordinal alpha is not much higher than the coefficient alpha, then this suggests that there is little information loss from dichotomous scoring. Conversely, a substantial gap suggests that meaningful information is lost by dichotomous scoring.
 
 ```{r}
 ### Coefficient alpha using Pearson correlations
@@ -65,11 +145,33 @@ tetra <- tetrachoric(items_scored)
 alpha(tetra$rho)[c("total", "feldt")]
 ```
 
-The coefficient alpha estimate is 0.72 (95% CI [.68, .75]) and the ordinal alpha estimate is 0.83 (95% CI [.70, .92]). The difference is fairly substantial and suggests that the item set contains items with extreme difficulty values, and that there is meaningful information loss from dichotomous scoring. Furthermore, the width of the confidence interval for the ordinal alpha estimate is 0.22, compared to 0.07 for the coefficient alpha estimate. This is consistent with the tetrachoric correlation being a less precise reflection of the true linear relationship when the item difficulty values are extreme, as mentioned earlier. 
+The Cronbach's alpha estimate is .72 (95% CI \[.68, .75\]) and the ordinal alpha estimate is .83 (95% CI \[.70, .92\]). The point estimates differ by .11, which is consistent with some degree of information loss from dichotomous scoring; however, since the confidence intervals overlap, the data alone cannot determine if the two alpha estimates are significantly different. Additionally, the width of the confidence interval for the ordinal alpha estimate (width = .22) is around three times larger than for the coefficient alpha estimate (width = .07), which is consistent with the additional uncertainty introduced by the maximum likelihood estimation of the tetrachoric correlations.
 
-The internal consistency of the composite scores likely falls within the "acceptable" range according to the recommendations of Nunnally & Bernstein (1994). However, given that the instrument was designed to measure a single construct, this level of internal consistency is not particularly strong. Additionally, the recommendation by Nunnally is for early-stage research and classroom practice, and is below levels recommended for high-stakes decisions. Thus, the instrument is recommended for use in classroom settings, but should not be used as the sole basis for high-stakes decisions. 
+The internal consistency of the composite scores is not particularly strong for an instrument which attempts to measure a single construct. The Spearman-Brown prophecy formula can be used to predict the reliability of the instrument if the number of items were to be increased. Note that the Spearman-Brown prophecy formula assumes that the items are parallel. The formula is less accurate for essentially tau-equivalent items and even less accurate for congeneric items. The `spearman.brown()` function in the `{CTT}` package can be used to perform calculations using the Spearman-Brown prophecy formula. 
 
-Next, the classical item difficulty, discrimination, and alpha-if-dropped are calculated and summarized in the table below. For item discrimination, both the item-total and the item-rest correlations are reported as point-biserial correlations, consistent with standard practice in classical item analysis. 
+```{r}
+#| message: false
+
+## Load the {CTT} package
+library(CTT)
+
+## Predicted Cronbach's alpha if test length is doubled
+spearman.brown(.72, input = 2, n.or.r = "n")
+
+## Predicted factor of test length increase required for Cronbach's alpha = .90
+spearman.brown(.72, .90, n.or.r = "r")
+
+```
+
+&nbsp;
+
+***Key Takeaways**: The Cronbach's alpha estimate is .72 (95% CI \[.68, .75\]) and the ordinal alpha estimate is .83 (95% CI \[.70, .92\]). The internal consistency of the composite scores is not particularly strong for an instrument which attempts to measure a single construct. According to a frequently cited guideline by Nunnally (1978), a Cronbach's alpha of .70 or above is acceptable for early stages of research. However, for applied research, a Cronbach's alpha of .90 or higher is typically recommended (Lance et al., 2006). The Spearman-Brown prophecy formula predicts a Cronbach's alpha of around .84 if the test length were to be doubled to 40 items. Additionally, the formula predicts that an alpha of .90 would be achieved with 70 items.*
+
+---
+
+## Classical Item Analysis
+
+Next, the classical item difficulty, discrimination, and alpha-if-dropped are calculated and summarized in the table below. For item discrimination, both the item-total and the item-rest correlations are reported as point-biserial correlations.
 
 ```{r}
 CTT_results <- data.frame(
@@ -81,17 +183,17 @@ CTT_results <- data.frame(
 CTT_results
 ```
 
-Notably, item 17 has very low discrimination (RIR = .049) as well as being a challenging item (*p* = .291). This indicates that item 17 is highly problematic, since individuals who correctly answered the item were not meaningfully more likely to have a higher total score. This is consistent with item QR17 having an alpha-if-dropped of 0.725, which is higher than the overall coefficient alpha estimate. Thus, item 17 is recommended for revision. 
+Notably, item 17 has very low discrimination (RIR = .049) as well as being a challenging item (*p* = .291). This indicates that item 17 is highly problematic, since individuals who correctly answered the item were not meaningfully more likely to have a higher total score. This is consistent with item QR17 having an alpha-if-dropped of 0.725, which is higher than the overall coefficient alpha estimate. Thus, item 17 is recommended for revision.
 
-Additionally, item 7 (*p* = .541, RIR = .106, $\alpha_{drop}$ = .722) and item 4 (*p* = .399, RIR = .177, $\alpha_{drop}$ = .715) have low discrimination which is not attributable to floor or ceiling effects. Thus, these two items may also warrant revision. 
+Additionally, item 7 (*p* = .541, RIR = .106, $\alpha_{drop}$ = .722) and item 4 (*p* = .399, RIR = .177, $\alpha_{drop}$ = .715) have low discrimination which is not attributable to floor or ceiling effects. Thus, these two items may also warrant revision.
 
 *In conclusion, the classical reliability analysis suggests that the internal consistency of the total scores likely falls within the "acceptable" range according to the recommendations of Nunnally & Bernstein (1994). Furthermore, the difference between the coefficient alpha and the ordinal alpha suggests that there is meaningful information loss from dichotomous scoring. Additionally, the classical item analysis suggests that item 17, item 7, and item 4 have poor discrimination and may benefit from revision, in order of importance.*
 
----
+------------------------------------------------------------------------
 
 ## Classical Distractor Analysis
 
-Before performing distractor analysis, there is a minor issue with the `HCIdata` dataset that needs to be corrected. Item 5 (A5) should have four response options (A/B/C/D). However, looking at the dataset, two entries have been incorrectly coded as lowercase "c" rather than uppercase "C", resulting in the variable having 5 factor levels (A/B/C/c/D). This can be easily corrected using the `fct_recode()` function in the `{forcats}` package, which is part of the tidyverse family of R packages. 
+Before performing distractor analysis, there is a minor issue with the `HCIdata` dataset that needs to be corrected. Item 5 (A5) should have four response options (A/B/C/D). However, looking at the dataset, two entries have been incorrectly coded as lowercase "c" rather than uppercase "C", resulting in the variable having 5 factor levels (A/B/C/c/D). This can be easily corrected using the `fct_recode()` function in the `{forcats}` package, which is part of the tidyverse family of R packages.
 
 ```{r}
 ## Load the forcats package
@@ -101,15 +203,15 @@ library(forcats)
 items_unscored$A5 <- fct_recode(items_unscored$A5, "C" = "c")
 ```
 
-Now the two factor levels have been merged. Looking at the dataset, item A5 now has 4 factor levels (A/B/C/D), which is correct. Note that not all items have 4 factor levels; the majority have either 3 or 4 factor levels, with a few items having 5 factor levels. There are no additional issues with the dataset, so we may proceed with distractor analysis. 
+Now the two factor levels have been merged. Looking at the dataset, item A5 now has 4 factor levels (A/B/C/D), which is correct. Note that not all items have 4 factor levels; the majority have either 3 or 4 factor levels, with a few items having 5 factor levels. There are no additional issues with the dataset, so we may proceed with distractor analysis.
 
 Distractor analysis may be divided into "classical" and "model-based" approaches. This section covers classical distractor analysis, while a later section will cover model-based approaches such as the nominal response model (NRM). Classical distractor analysis primarily involves examining statistics such as the proportions of test-takers who select each distractor and the point-biserial or biserial correlations between each distractor and the total scores. The primary goal of classical distractor analysis is to guide item development by identifying non-functioning or non-discriminating distractors.
 
-Non-functioning distractors are distractors which are selected by a very low percentage of test-takers. A common rule-of-thumb is that distractors which are selected by less than 5% of test-takers are non-functioning. However, an exception to this rule can be made for very easy items. For instance, for a multiple-choice item in which 85% of test-takers chose the correct answer, it is likely that many of the distractors would be considered non-functioning under the 5% rule. However, such distractors are not necessarily problematic, and such items can still have good discrimination and be useful for content coverage purposes. 
+Non-functioning distractors are distractors which are selected by a very low percentage of test-takers. A common rule-of-thumb is that distractors which are selected by less than 5% of test-takers are non-functioning. However, an exception to this rule can be made for very easy items. For instance, for a multiple-choice item in which 85% of test-takers chose the correct answer, it is likely that many of the distractors would be considered non-functioning under the 5% rule. However, such distractors are not necessarily problematic, and such items can still have good discrimination and be useful for content coverage purposes.
 
-Non-discriminating distractors are distractors which are equally likely to be selected across the total score range. Good distractors test for misconceptions which are more common in test-takers with a lower total score. As total score increases, test-takers are expected to not have as many misconceptions, and thus should be less likely to select the distractors. If a distractor is roughly equally likely to be selected by all test-takers, no matter their total score, then this suggests that the functioning of the distractor may be unrelated to the construct of interest. For instance, the distractor may be selected due to confusing language or an unintentional cue in the item stem. Typically, the non-discriminating distractors of interest are those which are not also non-functioning, otherwise they would be simply considered non-functioning. 
+Non-discriminating distractors are distractors which are equally likely to be selected across the total score range. Good distractors test for misconceptions which are more common in test-takers with a lower total score. As total score increases, test-takers are expected to not have as many misconceptions, and thus should be less likely to select the distractors. If a distractor is roughly equally likely to be selected by all test-takers, no matter their total score, then this suggests that the functioning of the distractor may be unrelated to the construct of interest. For instance, the distractor may be selected due to confusing language or an unintentional cue in the item stem. Typically, the non-discriminating distractors of interest are those which are not also non-functioning, otherwise they would be simply considered non-functioning.
 
-An effective and efficient way to screen for non-functioning and non-discriminating distractors is to examine *trace plots*, which are also called *distractor plots*. Distractor plots can be created using the `plotDistractorAnalysis()` function in the `{ShinyDataAnalysis}` package. To make the plots look a little nicer, the `{ggplot2}` and `{patchwork}` packages are also used. 
+An effective and efficient way to screen for non-functioning and non-discriminating distractors is to examine *trace plots*, which are also called *distractor plots*. Distractor plots can be created using the `plotDistractorAnalysis()` function in the `{ShinyDataAnalysis}` package. To make the plots look a little nicer, the `{ggplot2}` and `{patchwork}` packages are also used.
 
 ```{r}
 #| message: false
@@ -141,7 +243,7 @@ for (i in seq_along(distractor_plots)) {
                                         }
 ```
 
-To understand the elements of a distractor plot, let us examine the distractor plot for item 1 below. The horizontal axis represents the total score, which has been grouped into 4 quantiles. Group 1 includes the lowest 25% of total scores, group 2 includes the next 25%, and so on. The vertical axis represents the proportion of test-takers who selected each response option. The correct answer, as defined by the scoring key, is shown using a solid line, while distractors are shown using dashed lines. 
+To understand the elements of a distractor plot, let us examine the distractor plot for item 1 below. The horizontal axis represents the total score, which has been grouped into 4 quantiles. Group 1 includes the lowest 25% of total scores, group 2 includes the next 25%, and so on. The vertical axis represents the proportion of test-takers who selected each response option. The correct answer, as defined by the scoring key, is shown using a solid line, while distractors are shown using dashed lines.
 
 ```{r}
 #| fig-height: 5
@@ -150,7 +252,7 @@ To understand the elements of a distractor plot, let us examine the distractor p
 distractor_plots$A1
 ```
 
-Now let's examine the distractor plots for all 20 items. The plots are neatly summarized into a single multi-panel figure. The legends and axis titles are omitted for visual clarity; all plots within the mosaic use the same coloring scheme described in the code above. 
+Now let's examine the distractor plots for all 20 items. The plots are neatly summarized into a single multi-panel figure. The legends and axis titles are omitted for visual clarity; all plots within the mosaic use the same coloring scheme described in the code above.
 
 ```{r}
 #| fig-height: 15
@@ -166,13 +268,10 @@ wrap_plots(distractor_plots, ncol = 4) &
         )
 ```
 
-Numerical values for the selection proportions, as well as additional statistics such as the sample size for each response option and the point-biserial correlations between each response option and the total scores, are a useful supplement to the distractor plots. The `DistractorAnalysis()` function in the `{ShinyItemAnalysis}` package will provide the selection proportions by group, but it does not provide the additional statistics. Thus, I prefer the `{CTT}` package which has a very similar function called `distractorAnalysis()`. In fact, the function in the `{ShinyItemAnalysis}` package is a modified version of the function in the `{CTT}` package, so the underlying code is very similar. 
+Numerical values for the selection proportions, as well as additional statistics such as the sample size for each response option and the point-biserial correlations between each response option and the total scores, are a useful supplement to the distractor plots. The `DistractorAnalysis()` function in the `{ShinyItemAnalysis}` package will provide the selection proportions by group, but it does not provide the additional statistics. Thus, I prefer the `{CTT}` package which has a very similar function called `distractorAnalysis()`. In fact, the function in the `{ShinyItemAnalysis}` package is a modified version of the function in the `{CTT}` package, so the underlying code is very similar.
 
 ```{r}
 #| message: false
-
-## Load the CTT package
-library(CTT)
 
 ## Compute distractor statistics
 DA_CTT <- distractorAnalysis(
@@ -188,13 +287,13 @@ DA_CTT
 
 Now that the distractor plots and statistics for all 20 items are computed, let us examine the items for any issues with distractor functioning. First, a cursory glance at the distractor plots provides a useful overall picture of distractor functioning. Here are some useful guidelines when examining distractor plots:
 
-1. The correct option (solid line) should trend upwards.
-2. The distractors (dashed lines) should trend downwards.
-3. The highest total score group should not have any distractors which are selected more frequently than the correct option. 
-4. Flat trendlines suggest non-discriminating distractors. 
-5. Very low proportion trendlines suggest non-functioning distractors.  
+1.  The correct option (solid line) should trend upwards.
+2.  The distractors (dashed lines) should trend downwards.
+3.  The highest total score group should not have any distractors which are selected more frequently than the correct option.
+4.  Flat trendlines suggest non-discriminating distractors.
+5.  Very low proportion trendlines suggest non-functioning distractors.
 
-An example of an easy but well-discriminating item is item 3 (*p* = .848, RIR = .344). The correct option trends upwards, the distractors trend downwards, and the distractors are selected at a substantial proportion among lower total score groups. 
+An example of an easy but well-discriminating item is item 3 (*p* = .848, RIR = .344). The correct option trends upwards, the distractors trend downwards, and the distractors are selected at a substantial proportion among lower total score groups.
 
 ```{r}
 #| fig-height: 5
@@ -203,7 +302,7 @@ An example of an easy but well-discriminating item is item 3 (*p* = .848, RIR = 
 distractor_plots$A3
 ```
 
-An example of a difficult but well-discriminating item is item 6 (*p* = .359, RIR = .345). The correct option trends upwards, the distractors trend downwards, and the distractors are selected at a substantial proportion among lower total score groups. Since this item is quite difficult, we see that lower total score groups are much more likely to select the distractor option B, and that option B retains a substantial proportion even at higher total score groups. 
+An example of a difficult but well-discriminating item is item 6 (*p* = .359, RIR = .345). The correct option trends upwards, the distractors trend downwards, and the distractors are selected at a substantial proportion among lower total score groups. Since this item is quite difficult, we see that lower total score groups are much more likely to select the distractor option B, and that option B retains a substantial proportion even at higher total score groups.
 
 ```{r}
 #| fig-height: 5
@@ -212,7 +311,7 @@ An example of a difficult but well-discriminating item is item 6 (*p* = .359, RI
 distractor_plots$A6
 ```
 
-An example of a non-functioning distractor can be found in item 12 (*p* = .577, RIR = .300). We see that distractor option B (green) is almost never selected, even in the lowest total score group. The exact proportions according to the table above are (.03, .01, .01, .01) for the 4 groups, from lowest to highest total score. 
+An example of a non-functioning distractor can be found in item 12 (*p* = .577, RIR = .300). We see that distractor option B (green) is almost never selected, even in the lowest total score group. The exact proportions according to the table above are (.03, .01, .01, .01) for the 4 groups, from lowest to highest total score.
 
 ```{r}
 #| fig-height: 5
@@ -224,34 +323,34 @@ distractor_plots$A12
 Overall, the classical distractor analysis indicates that there are relatively few problematic distractors. There are a few potentially non-functional distractors, but there are no clearly non-discriminating distractors. This is expected since the instrument was developed with distractor functioning in mind. Based on overall selection proportions, the potential non-functioning distractors include:
 
 - Item 1: distractor A (prop = .04).
-- Item 4: distractors A (prop = .03) and B (prop = .03). 
+- Item 4: distractors A (prop = .03) and B (prop = .03).
 - Item 9: distractor C (prop = .02).
-- Item 12: distractors B (prop = .02) and C (prop = .04). 
-- Item 20: distractor A (prop = .02). 
+- Item 12: distractors B (prop = .02) and C (prop = .04).
+- Item 20: distractor A (prop = .02).
 
 Earlier it was mentioned that a low overall selection proportion does not necessarily mean that the distractor is problematic. This is because the item may be an easy item, in which case low overall selection proportions are expected. Additionally, the distractor may be selected to a substantial degree by lower total score groups, but almost never selected by higher total score groups, resulting in a low overall selection proportion. Such distractors may still discriminate well, as indicated by the point-biserial correlations, even though they have a low overall selection proportion. Let us examine the potential non-functioning distractors with these considerations in mind.
 
-For item 1, Distractor A has a moderate negative point-biserial correlation ($r_{pbis}=-.25$) with the selection proportions (.09, .05, .01, .00) in order from lowest to highest total score group. Since option A discriminates fairly well and is selected at a substantial frequency by lower total score groups, this distractor is likely unproblematic and does not require revision. 
+For item 1, Distractor A has a moderate negative point-biserial correlation ($r_{pbis}=-.25$) with the selection proportions (.09, .05, .01, .00) in order from lowest to highest total score group. Since option A discriminates fairly well and is selected at a substantial frequency by lower total score groups, this distractor is likely unproblematic and does not require revision.
 
-For item 4, distractors A and B have moderate negative point-biserial correlations ($r_{pbis}=-.27$ and $r_{pbis}=-.26$, respectively), but they are only selected at a substantial frequency by the lowest total score group, and are almost never selected by the other 3 groups. This suggests that distractors A and B are primarily selected due to chance guessing at low ability levels. Additionally, distractor C clearly dominates the response options, with the selection proportions (.61, .60, .60, .33). The distractor functioning indicates that this item is essentially dichotomous, and is consistent with the context found in the item stem, which essentially asks whether a homeostatic control mechanism is always functioning (option D) or if it only activates in certain scenarios (option C). 
+For item 4, distractors A and B have moderate negative point-biserial correlations ($r_{pbis}=-.27$ and $r_{pbis}=-.26$, respectively), but they are only selected at a substantial frequency by the lowest total score group, and are almost never selected by the other 3 groups. This suggests that distractors A and B are primarily selected due to chance guessing at low ability levels. Additionally, distractor C clearly dominates the response options, with the selection proportions (.61, .60, .60, .33). The distractor functioning indicates that this item is essentially dichotomous, and is consistent with the context found in the item stem, which essentially asks whether a homeostatic control mechanism is always functioning (option D) or if it only activates in certain scenarios (option C).
 
-For item 9, distractor C has a moderate negative point-biserial correlation ($r_{pbis}=-.23$) but is essentially only selected by the lowest total score group (.06, .00, .00, .00). This suggests that distractor C is primarily selected due to chance guessing at low ability levels and may require revision. 
+For item 9, distractor C has a moderate negative point-biserial correlation ($r_{pbis}=-.23$) but is essentially only selected by the lowest total score group (.06, .00, .00, .00). This suggests that distractor C is primarily selected due to chance guessing at low ability levels and may require revision.
 
 For item 12, distractor B has a weak negative point-biserial correlation ($r_{pbis}=-.14$) and is essentially only selected by the lowest total score group (.03, .01, .01, .01), and distractor C has a moderate negative point-biserial correlation ($r_{pbis}=-.21$) and is selected at a substantial frequency in the lower total score groups (.07, .06, .03, .00). This suggests that distractor B may require revision, but distractor C is likely unproblematic.
 
-For item 20, distractor A has a weak negative point-biserial correlation ($r_{pbis}=-.19$) and is essentially only selected by the lowest total score group (.05, .01, .00, .00). This suggests that distractor A is primarily selected due to chance guessing at low ability levels and may require revision. Additionally, this item is structurally similar to item 4, with the distractor functioning and item stem indicating that the item is essentially dichotomous. 
+For item 20, distractor A has a weak negative point-biserial correlation ($r_{pbis}=-.19$) and is essentially only selected by the lowest total score group (.05, .01, .00, .00). This suggests that distractor A is primarily selected due to chance guessing at low ability levels and may require revision. Additionally, this item is structurally similar to item 4, with the distractor functioning and item stem indicating that the item is essentially dichotomous.
 
-An additional point worth noting is that some distractors (notably in item 15 and item 17) have a trendline which is peaked around the middle total score range. This suggests that these distractors are of a different type compared to those which trend downwards monotonically; rather than affecting lower ability individuals the most, individuals need to be at a certain ability level to possess the partial understanding required for these distractors to function. These distractors are not necessarily problematic and could be useful and informative. However, the functioning of these distractors is inconclusive under classical distractor analyses. More sophisticated methods, such as item response theory (IRT) approaches using the nominal response model (NRM), may better explain the functioning of these distractors. 
+An additional point worth noting is that some distractors (notably in item 15 and item 17) have a trendline which is peaked around the middle total score range. This suggests that these distractors are of a different type compared to those which trend downwards monotonically; rather than affecting lower ability individuals the most, individuals need to be at a certain ability level to possess the partial understanding required for these distractors to function. These distractors are not necessarily problematic and could be useful and informative. However, the functioning of these distractors is inconclusive under classical distractor analyses. More sophisticated methods, such as item response theory (IRT) approaches using the nominal response model (NRM), may better explain the functioning of these distractors.
 
 *In conclusion, the classical distractor analysis suggests that the distractors are functioning well in general. Item 9 (distractor C) and item 12 (distractor B) are infrequently selected and are essentially only selected by the group with the lowest 25% of total scores, which suggests that these distractors may be non-functioning and may benefit from revision. Additionally, the distractor functioning for item 4 and item 20 suggests that these items are essentially dichotomous, which is consistent with the context found in the item stems. These distractors may benefit from revision, or they may be retained as is, since these items still provide useful information about test-takers.*
 
----
+------------------------------------------------------------------------
 
 ## Optimal Scaling
 
-Thus far, the items have been dichotomously scored by assigning each correct option a score of 1 and each incorrect option a score of 0. However, it is likely that some information is lost by dichotomous scoring. This is because dichotomous scoring treats each incorrect option as having equal value, which is unlikely since the distractors differ in their quality, as seen in the classical distractor analysis above. An alternative is to use *optimal scaling*, which describes a set of data-driven approaches that assign different scores to each response option by optimizing for some statistical criterion. 
+Thus far, the items have been dichotomously scored by assigning each correct option a score of 1 and each incorrect option a score of 0. However, it is likely that some information is lost by dichotomous scoring. This is because dichotomous scoring treats each incorrect option as having equal value, which is unlikely since the distractors differ in their quality, as seen in the classical distractor analysis above. An alternative is to use *optimal scaling*, which describes a set of data-driven approaches that assign different scores to each response option by optimizing for some statistical criterion.
 
-A common statistical criterion is to choose scores which maximize the sum of item correlations (the entries in the item correlation matrix). This is equivalent to maximizing the coefficient alpha of the instrument. The `corAspect()` function in the `{aspect}` package (Mair & de Leeuw, 2010) can be used to perform optimal scaling. By default, the `corAspect()` function optimizes for the sum of item correlations (`aspect = "aspectSum"`) and assumes that the variables are nominal (`level = "nominal"`). 
+A common statistical criterion is to choose scores which maximize the sum of item correlations (the entries in the item correlation matrix). This is equivalent to maximizing the coefficient alpha of the instrument. The `corAspect()` function in the `{aspect}` package (Mair & de Leeuw, 2010) can be used to perform optimal scaling. By default, the `corAspect()` function optimizes for the sum of item correlations (`aspect = "aspectSum"`) and assumes that the variables are nominal (`level = "nominal"`).
 
 ```{r}
 ## Load the aspect package
@@ -265,40 +364,40 @@ round(opt_alpha$eigencor, 2) # Eigenvalues of the correlation matrix
 lapply(opt_alpha$catscores, round, 2) # Optimal scores for each item
 ```
 
-Additionally, the total scores based on optimal scores can be computed, and the relationship between the total scores can be examined by computing the correlation and creating a scatterplot. 
+Additionally, the total scores based on optimal scores can be computed, and the relationship between the total scores can be examined by computing the correlation and creating a scatterplot.
 
 ```{r}
 ## Compute optimal total scores
 total_scores_opt <- unname(rowSums(opt_alpha$scoremat))
 
 ## Compare optimal and dichotomous total scores
-round(cor(total_scores, total_scores_opt), 2)
-plot(total_scores, total_scores_opt)
+round(cor(HCIdata$total, total_scores_opt), 2)
+plot(HCIdata$total, total_scores_opt)
 ```
 
-Now let us interpret the results of the optimal scaling procedure. Looking at the eigenvalues, we see that there the first eigenvalue (3.86) is much larger than subsequent eigenvalues (1.30, 1.22, 1.11, ...). This suggests that the dataset is unidimensional. Additional dimensionality checks will be performed in a later section. 
+Now let us interpret the results of the optimal scaling procedure. Looking at the eigenvalues, we see that there the first eigenvalue (3.86) is much larger than subsequent eigenvalues (1.30, 1.22, 1.11, ...). This suggests that the dataset is unidimensional. Additional dimensionality checks will be performed in a later section.
 
-Looking at the optimal scores (category scores) for each item, we see that, in general, the positive values are quite modest (~0.50 to ~1.10), while the negative values can be quite extreme (e.g. -4.52). This is because distractors which are selected very infrequently can have inflated scores due to having very small sample sizes for those groups. 
+Looking at the optimal scores (category scores) for each item, we see that, in general, the positive values are quite modest (\~0.50 to \~1.10), while the negative values can be quite extreme (e.g. -4.52). This is because distractors which are selected very infrequently can have inflated scores due to having very small sample sizes for those groups.
 
-Furthermore, we see that, in general, the correct option has the most positive value. The only exception to this is item 17, in which the correct answer C is given an optimal score of 0.34, while the distractor A has a higher score of 1.00. This suggests that individuals who selected the distractor tended to do better on the other 19 items compared to individuals who selected the correct answer. This suggests that item 17 is problematic. 
+Furthermore, we see that, in general, the correct option has the most positive value. The only exception to this is item 17, in which the correct answer C is given an optimal score of 0.34, while the distractor A has a higher score of 1.00. This suggests that individuals who selected the distractor tended to do better on the other 19 items compared to individuals who selected the correct answer. This suggests that item 17 is problematic.
 
-Additionally, the correlation between the total scores using dichotomous or optimal scoring is around 0.95, which suggests that the two scoring methods agree on about 90% of the variance in how individuals are rank-ordered. This suggests that there is not much to be gained from optimal scoring. 
+Additionally, the correlation between the total scores using dichotomous or optimal scoring is around 0.95, which suggests that the two scoring methods agree on about 90% of the variance in how individuals are rank-ordered. This suggests that there is not much to be gained from optimal scoring.
 
 *In conclusion, the results of the optimal scoring procedure suggests that (1) item 17 is problematic, since the distractor option A was given a higher score (1.00) than the correct answer C (0.34), (2) not much is gained from optimal scoring, since the correlation between the total scores using both scoring approaches is around 0.95, which suggests a shared variance of around 90%, and (3) the data is unidimensional, since there is one dominant eigenvalue.*
 
----
+------------------------------------------------------------------------
 
 ## Dimensionality Analysis
 
-The dimensionality of the dataset can be examined using factor analysis. Before performing factor analysis, the Kaiser-Meyer-Olkin (KMO) index is a useful measure of how well-suited a dataset is for factor analysis. Here, the KMO index is calculated using the tetrachoric correlation matrix rather than the raw item responses (Pearson correlations), which is more appropriate since the items are dichotomously scored but are hypothesized to reflect an underlying continuous attribute. In fact, using Pearson correlations results in a slightly higher KMO index, but it is not shown here. 
+The dimensionality of the dataset can be examined using factor analysis. Before performing factor analysis, the Kaiser-Meyer-Olkin (KMO) index is a useful measure of how well-suited a dataset is for factor analysis. Here, the KMO index is calculated using the tetrachoric correlation matrix rather than the raw item responses (Pearson correlations), which is more appropriate since the items are dichotomously scored but are hypothesized to reflect an underlying continuous attribute. In fact, using Pearson correlations results in a slightly higher KMO index, but it is not shown here.
 
 ```{r}
 KMO(tetra$rho)
 ```
 
-The overall MSA is 0.78, which is acceptable but not particularly strong. Kaiser and Rice (1974) suggested that the overall MSA should exceed .50 as a bare minimum for a correlation matrix to be suitable for factor analysis. The overall MSA is lowered by a few items with low individual MSAs: item 17 (.40), item 7 (.62), item 4 (.63), and item 9 (.63). 
+The overall MSA is 0.78, which is acceptable but not particularly strong. Kaiser and Rice (1974) suggested that the overall MSA should exceed .50 as a bare minimum for a correlation matrix to be suitable for factor analysis. The overall MSA is lowered by a few items with low individual MSAs: item 17 (.40), item 7 (.62), item 4 (.63), and item 9 (.63).
 
-Next, the number of factors can be determined using parallel analysis. Parallel analysis compares the eigenvalues from the actual dataset against eigenvalues from simulated/resampled datasets of the same size. The idea is that a "real" factor should explain more variance than would be expected from chance alone. 
+Next, the number of factors can be determined using parallel analysis. Parallel analysis compares the eigenvalues from the actual dataset against eigenvalues from simulated/resampled datasets of the same size. The idea is that a "real" factor should explain more variance than would be expected from chance alone.
 
 ```{r}
 #| fig-height: 8
@@ -306,9 +405,9 @@ Next, the number of factors can be determined using parallel analysis. Parallel 
 fa.parallel(items_scored, fm = "ml", cor = "tet")
 ```
 
-The parallel analysis results suggest that there are 7 factors and 3 components. PCA analyzes total variance in each variable, so PCA eigenvalues tend to be larger and drop off faster. FA analyzes only the common variance between variables, so FA eigenvalues tend to be smaller and drop off more gradually. In this case, both results suggest that the dataset may have additional structure beyond a single construct. However, the eigenvalues clearly indicate that there is one dominant factor/component which is much larger than the others. This suggests that, even though additional factors may explain a significant amount of variance, the dataset is essentially unidimensional. 
+The parallel analysis results suggest that there are 7 factors and 3 components. PCA analyzes total variance in each variable, so PCA eigenvalues tend to be larger and drop off faster. FA analyzes only the common variance between variables, so FA eigenvalues tend to be smaller and drop off more gradually. In this case, both results suggest that the dataset may have additional structure beyond a single construct. However, the eigenvalues clearly indicate that there is one dominant factor/component which is much larger than the others. This suggests that, even though additional factors may explain a significant amount of variance, the dataset is essentially unidimensional.
 
-Next, we can fit EFA models with a different number of factors to compare their model fit. This will provide additional evidence about the dimensionality of the dataset. Since the parallel analysis suggested 3 components and 7 factors, all solutions up to 7 factors will be compared. 
+Next, we can fit EFA models with a different number of factors to compare their model fit. This will provide additional evidence about the dimensionality of the dataset. Since the parallel analysis suggested 3 components and 7 factors, all solutions up to 7 factors will be compared.
 
 ```{r}
 ## Fit EFA models
@@ -339,29 +438,29 @@ round(t(sapply(fit_fa_list, function(m) c(
       ))), 3)
 ```
 
-We see that the fit indices all improve monotonically as the number of factors increases, which is to be expected. Interestingly, the Bayesian Information Criterion (BIC) favors the 6-factor solution. The BIC rewards better model fit but also penalizes for increased complexity. A more negative BIC indicates a better model fit given its degree of complexity. We see that the BIC drops sharply at the beginning and continues to decrease until it hits a minimum in the 6-factor solution, before increasing again with the 7-factor solution. However, the BIC is not a perfect indicator of which solution should be retained. It's a good idea to look at the factor loadings to see if they make sense. 
+We see that the fit indices all improve monotonically as the number of factors increases, which is to be expected. Interestingly, the Bayesian Information Criterion (BIC) favors the 6-factor solution. The BIC rewards better model fit but also penalizes for increased complexity. A more negative BIC indicates a better model fit given its degree of complexity. We see that the BIC drops sharply at the beginning and continues to decrease until it hits a minimum in the 6-factor solution, before increasing again with the 7-factor solution. However, the BIC is not a perfect indicator of which solution should be retained. It's a good idea to look at the factor loadings to see if they make sense.
 
 ```{r}
 print(fit_fa_6$loadings, cutoff = 0.2)
 ```
 
-We see that a few items load almost exclusively on a single factor: item 14 (1.000), item 13 (.973), item 18 (.963), item 2 (.948), item 9 (.866). This is not a good sign and indicates that the data does not actually support having 6 factors. A few of the factors are likely just 1-2 items which have been treated as a factor. Let's look at the communalities for the items. 
+We see that a few items load almost exclusively on a single factor: item 14 (1.000), item 13 (.973), item 18 (.963), item 2 (.948), item 9 (.866). This is not a good sign and indicates that the data does not actually support having 6 factors. A few of the factors are likely just 1-2 items which have been treated as a factor. Let's look at the communalities for the items.
 
 ```{r}
 fit_fa_6$communalities
 ```
 
-We see that a few items (13, 14, and 18) have communalities equal to exactly .995. These are likely *Heywood cases*, in which a communality reaches or exceeds 1.0. The `{psych}` package caps it at .995 to prevent it from actually exceeding 1.0, which would be an impossible value. Additionally, we see that some items have extremely low communalities: item 7 (.058) and item 17 (.041). Thus, the 6-factor solution is almost certainly incorrect. 
+We see that a few items (13, 14, and 18) have communalities equal to exactly .995. These are likely *Heywood cases*, in which a communality reaches or exceeds 1.0. The `{psych}` package caps it at .995 to prevent it from actually exceeding 1.0, which would be an impossible value. Additionally, we see that some items have extremely low communalities: item 7 (.058) and item 17 (.041). Thus, the 6-factor solution is almost certainly incorrect.
 
-Looking at the communalities for the other solutions, the 5-factor, 4-factor, 3-factor, and 2-factor solutions all contain at least 1 Heywood case. The 1-factor solution is also problematic, as some items have extremely low communalities: item 4 (.043), item 7 (.024), item 9 (.082), and item 17 (.003). These items are the same ones that had a low MSA when calculating the KMO index. 
+Looking at the communalities for the other solutions, the 5-factor, 4-factor, 3-factor, and 2-factor solutions all contain at least 1 Heywood case. The 1-factor solution is also problematic, as some items have extremely low communalities: item 4 (.043), item 7 (.024), item 9 (.082), and item 17 (.003). These items are the same ones that had a low MSA when calculating the KMO index.
 
 *In conclusion, the dimensionality of the instrument is inconclusive. EFA solutions with 1 to 7 factors were compared. The fit statistics improved monotonically as the number of factors increased and the BIC favored the 6-factor solution. However, examination of the factor loadings and communalities indicated that all solutions except for the 1-factor solution contained Heywood cases. Additionally, a few items (4, 7, 9, and 17) were consistently found to have extremely low communalities. This suggests that these items are problematic and may need to be removed before dimensionality can be accurately assessed. However, for the purposes of subsequent IRT analyses, the dataset may be treated as essentially unidimensional, since there is one clearly dominant factor.*
 
----
+------------------------------------------------------------------------
 
 ## Item Response Theory Analysis
 
-The `{mirt}` package can be used to fit 1PL (Rasch), 2PL, and 3PL IRT models. 
+The `{mirt}` package can be used to fit 1PL (Rasch), 2PL, and 3PL IRT models.
 
 ```{r}
 #| message: false
@@ -376,15 +475,15 @@ fit_3PL <- mirt(items_scored, model = 1, itemtype = "3PL",
                   technical = list(NCYCLES = 2000))
 ```
 
-We see that the 1PL (Rasch) and 2PL models converged quickly, but that the 3PL model took a large number of iterations (1372) to converge. This may be due to an insufficient sample size (N=669) for stable parameter estimates, and may indicate that the 3PL estimation is too unstable to be used. Let us examine the 3PL estimation further by looking at the item parameters. 
+We see that the 1PL (Rasch) and 2PL models converged quickly, but that the 3PL model took a large number of iterations (1372) to converge. This may be due to an insufficient sample size (N=669) for stable parameter estimates, and may indicate that the 3PL estimation is too unstable to be used. Let us examine the 3PL estimation further by looking at the item parameters.
 
 ```{r}
 round(coef(fit_3PL, IRTpars = TRUE, simplify = TRUE)$items, 2)
 ```
 
-We see that some items have implausibly high discriminations: item 10 (3.66), item 13 (4.59), and item 14 (3.34). Furthermore, we also see that some items have implausibly low guessing parameters: item 2 (.03), item 4 (.01), item 5 (.01), item 6 (.10), item 7 (.01), item 8 (.00), item 9 (.00), item 18 (.00), item 19 (.10), and item 20 (.02). Thus, the 3PL estimation is likely too unstable to be used. We will proceed with the 1PL (Rasch) and 2PL models. 
+We see that some items have implausibly high discriminations: item 10 (3.66), item 13 (4.59), and item 14 (3.34). Furthermore, we also see that some items have implausibly low guessing parameters: item 2 (.03), item 4 (.01), item 5 (.01), item 6 (.10), item 7 (.01), item 8 (.00), item 9 (.00), item 18 (.00), item 19 (.10), and item 20 (.02). Thus, the 3PL estimation is likely too unstable to be used. We will proceed with the 1PL (Rasch) and 2PL models.
 
-Next, the item parameters from the 1PL (Rasch) and 2PL models are summarized in the following table. 
+Next, the item parameters from the 1PL (Rasch) and 2PL models are summarized in the following table.
 
 ```{r}
 IRT_results <- data.frame(
@@ -395,15 +494,15 @@ IRT_results <- data.frame(
 IRT_results
 ```
 
-Notably, item 17 has a very high difficulty (b = 7.40) and a very low discrimination (a = .12) under the 2PL model. This is the most clearly problematic item. 
+Notably, item 17 has a very high difficulty (b = 7.40) and a very low discrimination (a = .12) under the 2PL model. This is the most clearly problematic item.
 
-Looking at the item discriminations under the 2PL model, we see that there is a wide range of values (.12 to 1.80). Looking at the descriptive statistics below, we see that the item discriminations have a mean of .91 and a standard deviation of .42, which is a substantial amount of variation. This suggests that the equal-discrimination assumption underlying the 1PL (Rasch) model may be untenable for this dataset. 
+Looking at the item discriminations under the 2PL model, we see that there is a wide range of values (.12 to 1.80). Looking at the descriptive statistics below, we see that the item discriminations have a mean of .91 and a standard deviation of .42, which is a substantial amount of variation. This suggests that the equal-discrimination assumption underlying the 1PL (Rasch) model may be untenable for this dataset.
 
 ```{r}
 describe(coef(fit_2PL, IRTpars = TRUE, simplify = TRUE)$items[, "a"])
 ```
 
-Now let us compare the fit of the 1PL (Rasch) and 2PL models. Since the models are nested, a likelihood ratio test (LRT) can be performed and relative model fit statistics can be obtained. Furthermore, absolute model fit statistics can be obtained by calculating the M2 index, which is specifically designed to compare IRT models. Additionally, item fit can be compared by calculating the S-X$^2$ statistics for each item. 
+Now let us compare the fit of the 1PL (Rasch) and 2PL models. Since the models are nested, a likelihood ratio test (LRT) can be performed and relative model fit statistics can be obtained. Furthermore, absolute model fit statistics can be obtained by calculating the M2 index, which is specifically designed to compare IRT models. Additionally, item fit can be compared by calculating the S-X$^2$ statistics for each item.
 
 ```{r}
 ## Relative fit statistics
@@ -418,27 +517,24 @@ itemfit(fit_1PL)
 itemfit(fit_2PL)
 ```
 
-In terms of relative fit, the LRT is significant ($\chi^2$ = 179.33, df = 19, p < .001), which indicates that the more complex model (2PL) fits significantly better than the less complex model (1PL/Rasch). The information criteria all agree with this result, with the 2PL model having a lower AIC by about 141 points and a lower BIC by about 56 points. 
+In terms of relative fit, the LRT is significant ($\chi^2$ = 179.33, df = 19, p \< .001), which indicates that the more complex model (2PL) fits significantly better than the less complex model (1PL/Rasch). The information criteria all agree with this result, with the 2PL model having a lower AIC by about 141 points and a lower BIC by about 56 points.
 
-In terms of absolute fit, the 2PL model fits better according to every statistic: the M2 is about 199 points lower for the 2PL model, the SRMSR for the 2PL is .047 (compared to .073 for the 1PL), and the TLI and CFI are .915 and .924, respectively. According to conventional guidelines (SRMSR < .05, TLI > .90, CFI > .90), the 2PL model has good fit, while the 1PL model has inadequate fit. 
+In terms of absolute fit, the 2PL model fits better according to every statistic: the M2 is about 199 points lower for the 2PL model, the SRMSR for the 2PL is .047 (compared to .073 for the 1PL), and the TLI and CFI are .915 and .924, respectively. According to conventional guidelines (SRMSR \< .05, TLI \> .90, CFI \> .90), the 2PL model has good fit, while the 1PL model has inadequate fit.
 
-In terms of item fit, a significant result ($\alpha$ = .05) in the S-X$^2$ test indicates a misfitting item. Since the S-X$^2$ test is sensitive to sample size, it is also a good idea to look at the RMSEA for an effect size measure (conventional guideline is RMSEA < .05 indicates good fit). For the 1PL model, items 3, 4, 7, 9, 10, 13, 17, 18, and 19 show statistically significant misfit, and items 7 and 17 show practically significant misfit. For the 2PL model, items 10 and 13 show statistically significant misfit, and no items show practically significant misfit. Thus, the 2PL model has much better item fit than the 1PL (Rasch) model. 
+In terms of item fit, a significant result ($\alpha$ = .05) in the S-X$^2$ test indicates a misfitting item. Since the S-X$^2$ test is sensitive to sample size, it is also a good idea to look at the RMSEA for an effect size measure (conventional guideline is RMSEA \< .05 indicates good fit). For the 1PL model, items 3, 4, 7, 9, 10, 13, 17, 18, and 19 show statistically significant misfit, and items 7 and 17 show practically significant misfit. For the 2PL model, items 10 and 13 show statistically significant misfit, and no items show practically significant misfit. Thus, the 2PL model has much better item fit than the 1PL (Rasch) model.
 
-Next, let us check how well the local independence assumptions holds under both models. This can be done using Yen's Q3 statistic. 
+Next, let us check how well the local independence assumptions holds under both models. This can be done using Yen's Q3 statistic.
 
 ```{r}
 residuals(fit_1PL, type = "Q3")
 residuals(fit_2PL, type = "Q3")
 ```
 
-The mean Q3 for the 1PL (Rasch) and 2PL models are -.037 and -.036, respectively, which are small. Additionally, the first and third quartiles are (-.078, -.002) for the 1PL (Rasch) model and (-.075, -.001) for the 2PL model. This indicates that, for the majority of items, there are no issues with local dependence. However, the large maximum values (.216 for the 1PL model and .245 for the 2PL model) indicate that there are item pairs with substantial dependence. To find the largest entries, the `suppress =` argument can be used to remove entries below a certain magnitude. A practical guideline is that a Q3 which is 0.20 above the mean should be flagged. 
+The mean Q3 for the 1PL (Rasch) and 2PL models are -.037 and -.036, respectively, which are small. Additionally, the first and third quartiles are (-.078, -.002) for the 1PL (Rasch) model and (-.075, -.001) for the 2PL model. This indicates that, for the majority of items, there are no issues with local dependence. However, the large maximum values (.216 for the 1PL model and .245 for the 2PL model) indicate that there are item pairs with substantial dependence. To find the largest entries, the `suppress =` argument can be used to remove entries below a certain magnitude. A practical guideline is that a Q3 which is 0.20 above the mean should be flagged.
 
 ```{r}
 residuals(fit_1PL, type = "Q3", suppress = .20 - .037)
 residuals(fit_2PL, type = "Q3", suppress = .20 - .036)
 ```
 
-For the 1PL model, we see that there is substantial dependence between item 4 and item 9, as well as between item 18 and item 19. For the 2PL model, we see that there is substantial dependence between item 4 and item 9, as well as between item 9 and item 20. The item stems for these item pairs may be worth examining for local dependence. 
-
-
-
+For the 1PL model, we see that there is substantial dependence between item 4 and item 9, as well as between item 18 and item 19. For the 2PL model, we see that there is substantial dependence between item 4 and item 9, as well as between item 9 and item 20. The item stems for these item pairs may be worth examining for local dependence.

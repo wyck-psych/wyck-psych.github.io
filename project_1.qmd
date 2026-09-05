@@ -54,12 +54,13 @@ describe(HCIdata$total)
 
 ## Classical Reliability Analysis
 
-The most common form of reliability that is analyzed in practice is *internal consistency*, which is typically estimated and reported using *Cronbach's alpha*. Internal consistency can be informally defined as the extent to which the items correlate with one another and thus appear to be measuring the same thing. This informal definition raises a natural question: *how is internal consistency a measure of reliability?* Internal consistency seems to be about the consistency of items within an instrument, while reliability seems to be about the consistency of scores obtained when repeated measures of the same instrument are taken. This raises a perhaps even more fundamental question: *how can the reliability of an instrument be meaningful without requiring repeated measures?*
+The most common form of reliability that is analyzed in practice is internal consistency, which is typically estimated and reported using Cronbach's alpha. Internal consistency can be informally defined as the extent to which the items correlate with one another and thus appear to be measuring the same thing. This informal definition raises a natural question: *how is internal consistency a measure of reliability?* Internal consistency seems to be about the consistency of items within an instrument, while reliability seems to be about the consistency of scores obtained when repeated measures of the same instrument are taken. This raises a perhaps even more fundamental question: *how can the reliability of an instrument be meaningful without requiring repeated measures?*
 
 These questions can be answered by examining the assumptions of the classical test theory (CTT) framework. The core component of the CTT framework is the *classical true score model*, which states that a *single* observed score $X$ can be decomposed into a true score and an error score:
 
 $$X=T+E$$ 
-Where the true score $T$ is defined as the expectation of the hypothetical distribution of observed scores if the experiment could be independently replicated infinitely many times, which is sometimes called the *propensity definition* of the true score:
+
+Where the true score $T$ is defined as the expectation of the hypothetical distribution of observed scores if it were possible to obtain an infinite number of independent repeated measures, which is sometimes called the *propensity definition* of the true score:
 
 $$T=E[X]$$
 
@@ -100,7 +101,7 @@ The propensity definition of the true score and the conceptual definition of rel
 
 This is a problem because there is, in fact, no way to estimate reliability under the classical true score model as defined thus far. The model is unidentified, since there is only one observed variable (X) and two unknowns (T and E). To resolve this issue, multiple measurements are needed, which may either be multiple item scores from one individual, or multiple test scores from a group of individuals. Given multiple measurements, the problem then becomes that of determining how the measurements need to relate to each other so that they can be combined in useful ways. 
 
-First, the assumption of *local independence* is almost always made. This assumption states that, given the true score(s), the observed scores are conditionally independent. Notably, this assumption provides the following useful result, which is that the errors between two distinct measurements do not covary. This result is very useful because many estimation methods used in CTT rely on the observed covariances between observed scores. These computations would be intractable if the covariances between error scores could not be set equal to zero.  
+First, the assumption of *local independence* is almost always made. This assumption states that, given the true score(s), the observed scores are conditionally independent. Notably, this assumption provides the following useful result, which is that the errors between two distinct measurements do not covary. This result is very useful because many estimation methods used in CTT rely on the covariances between observed scores. These computations would be intractable if the covariances between error scores could not be set equal to zero.  
 
 $$Cov[E_i,E_j]=0, \; \text{for items} \; i \neq j$$
 
@@ -128,9 +129,9 @@ To conclude the brief theoretical exposition, we see that the CTT framework make
 
 The tradeoff for this nice theoretical result is that the assumptions of either essential tau-equivalence or congeneric measurements have to be tenable. If we claim that the measurements are essentially tau-equivalent, then we are saying that all items load equally on the underlying construct (analogous to equal discrimination). If this is unreasonable, then we may need to settle for congeneric measurements, in which case Cronbach's alpha only provides a lower bound for reliability. 
 
-Another important assumption underlying the use of Cronbach's alpha is that the variables are continuous. When the variables are dichotomous, the Pearson correlations used to calculate Cronbach's alpha are known to underestimate the true relationship between items which have different difficulty levels. Consequently, estimate of Cronbach's alpha is attenuated. 
+Another important assumption underlying the use of Cronbach's alpha is that the variables are continuous. When the variables are dichotomous, the Pearson correlations used to calculate Cronbach's alpha are known to underestimate the true relationship between items which have different difficulty levels. Consequently, the estimate of Cronbach's alpha is attenuated. 
 
-For the HCI, the item responses are hypothesized to reflect an underlying continuous variable (understanding of homeostasis), but the item responses have had an artificial structure imposed on them via dichotomous scoring. Thus, the assumption of continuous variables is violated, and Cronbach's alpha likely underestimates the true internal consistency of the instrument. The *ordinal alpha* based on *tetrachoric correlations* may be more appropriate here.
+For the HCI, the item responses are hypothesized to reflect an underlying continuous variable (understanding of homeostasis), but the item responses have had an artificial structure imposed on them via dichotomous scoring. Thus, the assumption of continuous variables is violated, and Cronbach's alpha likely underestimates the true internal consistency of the instrument. The ordinal alpha based on tetrachoric correlations may be more appropriate here.
 
 Unlike the Pearson correlation, the tetrachoric correlation is not computed from the paired values directly. Rather, the tetrachoric correlation assumes that there is a normally distributed latent variable underlying each item. For each pair of items, the tetrachoric correlation is estimated from the observed 2×2 frequency table using the method of maximum likelihood. Thus, the tetrachoric correlation is itself a model which depends on assumptions.
 
@@ -147,7 +148,9 @@ alpha(tetra$rho)[c("total", "feldt")]
 
 The Cronbach's alpha estimate is .72 (95% CI \[.68, .75\]) and the ordinal alpha estimate is .83 (95% CI \[.70, .92\]). The point estimates differ by .11, which is consistent with some degree of information loss from dichotomous scoring; however, since the confidence intervals overlap, the data alone cannot determine if the two alpha estimates are significantly different. Additionally, the width of the confidence interval for the ordinal alpha estimate (width = .22) is around three times larger than for the coefficient alpha estimate (width = .07), which is consistent with the additional uncertainty introduced by the maximum likelihood estimation of the tetrachoric correlations.
 
-The internal consistency of the composite scores is not particularly strong for an instrument which attempts to measure a single construct. The Spearman-Brown prophecy formula can be used to predict the reliability of the instrument if the number of items were to be increased. Note that the Spearman-Brown prophecy formula assumes that the items are parallel. The formula is less accurate for essentially tau-equivalent items and even less accurate for congeneric items. The `spearman.brown()` function in the `{CTT}` package can be used to perform calculations using the Spearman-Brown prophecy formula. 
+The internal consistency of the composite scores is not particularly strong for an instrument which attempts to measure a single construct. According to a frequently cited guideline by Nunnally (1978), a Cronbach's alpha of .70 or above is acceptable for early stages of research. However, for applied research, a Cronbach's alpha of .90 or higher is typically recommended (Lance et al., 2006).
+
+The Spearman-Brown prophecy formula can be used to predict the reliability of the instrument if the number of items were to be increased. Note that the Spearman-Brown prophecy formula assumes that the items are parallel. The formula is less accurate for essentially tau-equivalent items and even less accurate for congeneric items. The `spearman.brown()` function in the `{CTT}` package can be used to perform calculations using the Spearman-Brown prophecy formula. 
 
 ```{r}
 #| message: false
@@ -155,41 +158,51 @@ The internal consistency of the composite scores is not particularly strong for 
 ## Load the {CTT} package
 library(CTT)
 
-## Predicted Cronbach's alpha if test length is doubled
-spearman.brown(.72, input = 2, n.or.r = "n")
-
 ## Predicted factor of test length increase required for Cronbach's alpha = .90
 spearman.brown(.72, .90, n.or.r = "r")
 
+## Predicted factor of test length increase required for ordinal alpha = .90
+spearman.brown(.83, .90, n.or.r = "r")
 ```
 
 &nbsp;
 
-***Key Takeaways**: The Cronbach's alpha estimate is .72 (95% CI \[.68, .75\]) and the ordinal alpha estimate is .83 (95% CI \[.70, .92\]). The internal consistency of the composite scores is not particularly strong for an instrument which attempts to measure a single construct. According to a frequently cited guideline by Nunnally (1978), a Cronbach's alpha of .70 or above is acceptable for early stages of research. However, for applied research, a Cronbach's alpha of .90 or higher is typically recommended (Lance et al., 2006). The Spearman-Brown prophecy formula predicts a Cronbach's alpha of around .84 if the test length were to be doubled to 40 items. Additionally, the formula predicts that an alpha of .90 would be achieved with 70 items.*
+***Key Takeaways**: The Cronbach's alpha estimate is .72 (95% CI \[.68, .75\]) and the ordinal alpha estimate is .83 (95% CI \[.70, .92\]). The internal consistency of the composite scores is not particularly strong for an instrument which attempts to measure a single construct. According to a frequently cited guideline by Nunnally (1978), a Cronbach's alpha of .70 or above is acceptable for early stages of research. However, for applied research, a Cronbach's alpha of .90 or higher is typically recommended (Lance et al., 2006). The Spearman-Brown prophecy formula predicts that a Cronbach's alpha of .90 would be achieved with 70 items and an ordinal alpha of .90 would be achieved with 37 items.*
 
 ---
 
 ## Classical Item Analysis
 
-Next, the classical item difficulty, discrimination, and alpha-if-dropped are calculated and summarized in the table below. For item discrimination, both the item-total and the item-rest correlations are reported as point-biserial correlations.
+Classical item analysis involves examining each item's difficulty, discrimination, and impact on test reliability. For dichotomous items, the item difficulty is simply the proportion of individuals who correctly answered the item, which is referred to as the *p-value*. The item discrimination can be examined by taking the point-biserial correlation between the item and the total scores, which is called the *item-total correlation*. The point-biserial correlation is equivalent to the Pearson correlation between a dichotomous variable and a continuous variable. An issue worth noting here is that, since the total scores contain the item which is being analyzed, the point-biserial correlation between the two variables will always be inflated since the item is partly correlated with itself. Thus, it's helpful to look at the *item-rest correlation*, which is the point-biserial correlation between the item and the total scores with that item removed. Lastly, the impact of an item on test reliability can be examined by calculating the Cronbach's alpha with that item removed, which is called the *alpha-if-deleted* or *alpha-if-dropped*. 
+
+These item statistics are considered "classical" because (1) they can be calculated from the sample moments alone (means, variances, and covariances of the data), and (2) they are not parameters within a generative probability model which specifies a joint distribution over the variables involved, such as in item response theory models.
+
+The *p*-value is a proportion which ranges from 0 to 1. For educational assessment, it is often desirable to have slightly easier items with a difficulty around *p* = .60, meaning that around 60% of individuals correctly answered the item. This is because challenging items can result in frustration for the test-takers, especially if there are a large number of them and the test-taker is repeatedly struggling to answer them. However, challenging items are not necessarily problematic and may be important to include for content coverage reasons. On the other hand, extreme difficulty values *are* problematic because the variance of a dichotomous variable shrinks as the p-value deviates from *p* = .50, and this limits the possible values of the point-biserial correlation. A reasonable range is that item difficulties should be between *p* = .10 and *p* = .90. 
+
+The item-total and item-rest correlations are correlation coefficients which can range from -1 to 1. We will focus on the item-rest correlation, since it is generally preferred as it provides a less biased measure of item discrimination. A common guideline is that an item-rest correlation above .40 is excellent, between .30 and .39 is good, between .20 and .29 is acceptable, and below .20 is poor. Additionally, negative item-rest correlations are highly problematic, since they indicate that individuals who got the item correct were *less* likely to get the other items correct. This is the opposite of what should be the case if the items measure the same construct. 
+
+The alpha-if-deleted statistic is the Cronbach's alpha of the instrument with the item removed and has the same range and interpretation as Cronbach's alpha. Items which contribute positively to reliability should have an alpha-if-deleted which is less than the overall alpha, since removing that item would weaken the internal consistency of the instrument. Items with an alpha-if-deleted which is greater than the overall alpha should be flagged for review, since this indicates that the instrument is more internally consistent without that item. A higher alpha-if-deleted is especially indicative for tests with a small number of items, since Cronbach's alpha is partly a function of the number of items. For a test with a small number of items, a higher alpha-if-deleted indicates that the internal consistency of the test would still be higher without that item, despite the decrease in test length. 
+
+The classical item statistics are calculated and summarized in the table below: 
 
 ```{r}
+## Create a table summarizing CTT item statistics (rounded to 3 decimal places)
 CTT_results <- data.frame(
                  difficulty = round(colMeans(items_scored), 3),
                  discrimination_IT = round(ItemAnalysis(items_scored)$RIT, 3),
                  discrimination_IR = round(ItemAnalysis(items_scored)$RIR, 3),
                  alpha_drop = round(alpha(items_scored)$alpha.drop$raw_alpha, 3)
                            )
+
+## Examine CTT item statistics
 CTT_results
 ```
 
-Notably, item 17 has very low discrimination (RIR = .049) as well as being a challenging item (*p* = .291). This indicates that item 17 is highly problematic, since individuals who correctly answered the item were not meaningfully more likely to have a higher total score. This is consistent with item QR17 having an alpha-if-dropped of 0.725, which is higher than the overall coefficient alpha estimate. Thus, item 17 is recommended for revision.
+&nbsp;
 
-Additionally, item 7 (*p* = .541, RIR = .106, $\alpha_{drop}$ = .722) and item 4 (*p* = .399, RIR = .177, $\alpha_{drop}$ = .715) have low discrimination which is not attributable to floor or ceiling effects. Thus, these two items may also warrant revision.
+***Key Takeaways**: The item difficulties range from p = .291 to p = .848, which are unproblematic and indicate that there are no items with severe ceiling or floor effects. Notably, item 17 has very low discrimination ($r_{IR}$ = .049) as well as being a relatively challenging item (p = .291). This indicates that item 17 is problematic, since individuals who correctly answered the item were not much more likely to perform well on the other items. This is consistent with item QR17 having an alpha-if-deleted of 0.725, which is higher than the overall Cronbach's alpha estimate of .716. Additionally, item 7 (p = .541, $r_{IR}$ = .106, $\alpha_{drop}$ = .722) and item 4 (p = .399, RIR = .177, $\alpha_{drop}$ = .715) have poor discrimination which is not attributable to floor or ceiling effects. Thus, item 17, item 7, and item 4 are recommended for revision, in order of importance.*
 
-*In conclusion, the classical reliability analysis suggests that the internal consistency of the total scores likely falls within the "acceptable" range according to the recommendations of Nunnally & Bernstein (1994). Furthermore, the difference between the coefficient alpha and the ordinal alpha suggests that there is meaningful information loss from dichotomous scoring. Additionally, the classical item analysis suggests that item 17, item 7, and item 4 have poor discrimination and may benefit from revision, in order of importance.*
-
-------------------------------------------------------------------------
+---
 
 ## Classical Distractor Analysis
 

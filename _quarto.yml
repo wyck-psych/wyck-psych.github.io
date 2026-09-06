@@ -32,4 +32,5 @@ format:
     toc: true
     code-block-bg: "#d4efdf"
     highlight-style: github
+    html-math-method: katex
 

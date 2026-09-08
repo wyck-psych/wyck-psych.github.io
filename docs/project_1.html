@@ -467,30 +467,18 @@ X1    1 669 12.13 3.65     12   12.22 4.45   3  20    17 -0.17    -0.68 0.14</co
 <p>Cronbach’s alpha can be calculated using the <code>alpha()</code> function in the <code>{psych}</code> package. The ordinal alpha can be calculated by first calculating the tetrachoric correlations between the scored items using the <code>tetrachoric()</code> function in the <code>{psych}</code> package and then using the resulting tetrachoric correlation matrix (<code>$rho</code>) as the input to the <code>alpha()</code> function.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Coefficient alpha using Pearson correlations</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(items_scored, <span class="at">cumulative =</span> <span class="cn">FALSE</span>)[<span class="fu">c</span>(<span class="st">"total"</span>, <span class="st">"feldt"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">alpha</span>(items_scored)<span class="sc">$</span>feldt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>$total
- raw_alpha std.alpha   G6(smc) average_r      S/N       ase      mean        sd
- 0.7161644 0.7215166 0.7300311 0.1146869 2.590878 0.0158408 0.6064275 0.1825975
-  median_r
- 0.1205056
-
-$feldt
-
+<pre><code>
    95% confidence boundaries (Feldt)
  lower alpha upper
   0.68  0.72  0.75</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Ordinal alpha using tetrachoric correlations</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>tetra <span class="ot">&lt;-</span> <span class="fu">tetrachoric</span>(items_scored)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(tetra<span class="sc">$</span>rho)[<span class="fu">c</span>(<span class="st">"total"</span>, <span class="st">"feldt"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">alpha</span>(tetra<span class="sc">$</span>rho)<span class="sc">$</span>feldt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>$total
- raw_alpha std.alpha   G6(smc) average_r      S/N  median_r
- 0.8295802 0.8295802 0.8587097 0.1957491 4.867863 0.2072622
-
-$feldt
-
+<pre><code>
    95% confidence boundaries (Feldt)
  lower alpha upper
    0.7  0.83  0.92</code></pre>
@@ -869,195 +857,63 @@ D       *   D 480 0.72  0.34    0.46  0.48  0.74  0.84  0.94</code></pre>
 <p>For item 9, distractor C has a moderately-sized negative point-biserial correlation (<span class="math inline">r_{IR}=-.23</span>) but is essentially only selected by the lowest total score group, with selection proportions (.06, .00, .00, .00). This suggests that distractor C is primarily selected due to chance guessing at very low ability levels and may require revision.</p>
 <p>For item 12, distractor B has a weak negative point-biserial correlation (<span class="math inline">r_{IR}=-.14</span>) and is essentially only selected by the lowest total score group, with selection proportions (.03, .01, .01, .01), and distractor C has a moderately-sized negative point-biserial correlation (<span class="math inline">r_{IR}=-.21</span>) and is selected at a substantial frequency in the lower total score groups, with selection proportions (.07, .06, .03, .00). This suggests that distractor B may require revision, but distractor C is likely unproblematic.</p>
 <p>For item 20, distractor A has a weak negative point-biserial correlation (<span class="math inline">r_{IR}=-.19</span>) and is essentially only selected by the lowest total score group, with selection proportions (.05, .01, .00, .00). This suggests that distractor A is primarily selected due to chance guessing at very low ability levels and may require revision. Additionally, this item is structurally similar to item 4, with the distractor functioning and item stem indicating that the item is essentially dichotomous.</p>
+<p>&nbsp;</p>
 <p><em><strong>Key Takeaways</strong>: The classical distractor analysis suggests that the distractors are functioning well in general. Item 9 (distractor C) and item 12 (distractor B) are infrequently selected and are essentially only selected by the group with the lowest 25% of total scores, which suggests that these distractors may benefit from revision. Additionally, the distractor functioning for item 4 and item 20 suggests that these items are essentially dichotomous, which is consistent with the context found in the item stems. These distractors may benefit from revision, or they may be retained as is, since these items still provide useful information about test-takers.</em></p>
 <hr>
 </section>
 <section id="optimal-scaling" class="level2">
 <h2 class="anchored" data-anchor-id="optimal-scaling">1.5) Optimal Scaling</h2>
-<p>Thus far, the items have been dichotomously scored by assigning each correct option a score of 1 and each incorrect option a score of 0. However, it is likely that some information is lost by dichotomous scoring. This is because dichotomous scoring treats each incorrect option as having equal value, which is unlikely since the distractors differ in their quality, as seen in the classical distractor analysis above. An alternative is to use <em>optimal scaling</em>, which describes a set of data-driven approaches that assign different scores to each response option by optimizing for some statistical criterion.</p>
+<p>Thus far, the items have been dichotomously scored by assigning each correct option a score of 1 and each incorrect option a score of 0. However, it is likely that some information is lost by dichotomous scoring. This is because dichotomous scoring treats each incorrect option as having equal value, which is unlikely since the distractors differ in their quality, as seen in the classical distractor analysis above. Additionally, the difference in the point estimates for Cronbach’s alpha and ordinal alpha is consistent with there being some amount of information loss from dichotomous scoring. An alternative is to use <em>optimal scaling</em>, which describes a set of data-driven approaches that assign different scores to each response option by optimizing for some statistical criterion.</p>
 <p>A common statistical criterion is to choose scores which maximize the sum of item correlations (the entries in the item correlation matrix). This is equivalent to maximizing the coefficient alpha of the instrument. The <code>corAspect()</code> function in the <code>{aspect}</code> package (Mair &amp; de Leeuw, 2010) can be used to perform optimal scaling. By default, the <code>corAspect()</code> function optimizes for the sum of item correlations (<code>aspect = "aspectSum"</code>) and assumes that the variables are nominal (<code>level = "nominal"</code>).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Load the aspect package</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aspect)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Optimizing for the sum of item correlations (and thus coefficient alpha)</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>opt_alpha <span class="ot">&lt;-</span> <span class="fu">corAspect</span>(items_unscored, <span class="at">aspect =</span> <span class="st">"aspectSum"</span>, <span class="at">level =</span> <span class="st">"nominal"</span>)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Examining the output (rounded to 2 decimal places)</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(opt_alpha<span class="sc">$</span>eigencor, <span class="dv">2</span>) <span class="co"># Eigenvalues of the correlation matrix</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> [1] 3.86 1.30 1.22 1.11 1.07 0.96 0.93 0.90 0.88 0.84 0.83 0.81 0.77 0.74 0.72
-[16] 0.67 0.66 0.63 0.57 0.52</code></pre>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>opt_alpha <span class="ot">&lt;-</span> <span class="fu">corAspect</span>(items_unscored, <span class="at">aspect =</span> <span class="st">"aspectSum"</span>, <span class="at">level =</span> <span class="st">"nominal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(opt_alpha<span class="sc">$</span>catscores, round, <span class="dv">2</span>) <span class="co"># Optimal scores for each item</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>$A1
-  score
-A -2.47
-B -0.23
-C -1.69
-D  0.60
-
-$A2
-  score
-A -2.23
-B  0.54
-C -0.74
-
-$A3
-  score
-A  0.41
-B -2.91
-C -1.77
-
-$A4
-  score
-A -4.52
-B -3.44
-C -0.01
-D  0.56
-
-$A5
-  score
-A -1.19
-B  1.10
-C -1.14
-D -0.64
-
-$A6
-  score
-A -2.01
-B -0.46
-C  1.21
-
-$A7
-  score
-A -2.25
-B -0.49
-C  0.79
-
-$A8
-  score
-A -1.38
-B -1.73
-C  0.65
-
-$A9
-  score
-A -0.08
-B -2.24
-C -4.39
-D  0.71
-
-$A10
-  score
-A  0.74
-B -1.17
-C -1.49
-
-$A11
-  score
-A  0.50
-B -2.72
-C -1.04
-
-$A12
-  score
-A -1.49
-B -2.13
-C -2.11
-D  0.80
-E -0.69
-
-$A13
-  score
-A  0.79
-B -1.83
-C -1.35
-D -0.78
-
-$A14
-  score
-A  0.55
-B -1.41
-C -1.30
-D -2.53
-
-$A15
-  score
-A -1.03
-B -1.37
-C  0.97
-D  0.19
-
-$A16
-  score
-A  0.77
-B -1.01
-C -2.07
-D -0.51
-
-$A17
-  score
-A  1.00
-B -1.55
-C  0.34
-D  0.14
-
-$A18
-  score
-A -1.93
-B -1.87
-C  0.52
-D -2.11
-
-$A19
-  score
-A -1.83
-B -2.13
-C  0.53
-D -1.31
-E -2.03
-
-$A20
-  score
-A -3.23
-B -2.65
-C -0.92
-D  0.56</code></pre>
-</div>
-</div>
-<p>Additionally, the total scores based on optimal scores can be computed, and the relationship between the total scores can be examined by computing the correlation and creating a scatterplot.</p>
+<p>Cronbach’s alpha based on the optimal scores can be calculated using the <code>alpha()</code> function in the <code>{psych}</code> package with the transformed data matrix <code>opt_alpha$scoremat</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Compute optimal total scores</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>total_scores_opt <span class="ot">&lt;-</span> <span class="fu">unname</span>(<span class="fu">rowSums</span>(opt_alpha<span class="sc">$</span>scoremat))</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Compare optimal and dichotomous total scores</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">cor</span>(HCIdata<span class="sc">$</span>total, total_scores_opt), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Calculate Cronbach's alpha after optimal scaling</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">alpha</span>(opt_alpha<span class="sc">$</span>scoremat)<span class="sc">$</span>feldt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.95</code></pre>
+<pre><code>
+   95% confidence boundaries (Feldt)
+ lower alpha upper
+  0.74  0.77  0.79</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(HCIdata<span class="sc">$</span>total, total_scores_opt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The point estimate for the Cronbach’s alpha based on the optimal scores (<span class="math inline">\alpha</span> = .77, 95% CI [.74, .79]) is .05 higher than the point estimate for the Cronbach’s alpha based dichotomous scoring (<span class="math inline">\alpha</span> = .72, 95% CI [.68, .75]). Given that the optimal scaling procedure maximizes Cronbach’s alpha, the observed increase is relatively small and suggests that there is not much to be gained from optimal scoring. This, in turn, suggests that there is not much reliability-relevant information lost by dichotomous scoring for this particular sample.</p>
+<p>Additionally, the total scores based on optimal scores can be computed and the relationship between the original and optimal total scores can be examined by computing the correlation and creating a scatterplot.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Compute optimal total scores</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>total_scores_opt <span class="ot">&lt;-</span> <span class="fu">unname</span>(<span class="fu">rowSums</span>(opt_alpha<span class="sc">$</span>scoremat))</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Compare optimal and dichotomous total scores</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">cor</span>(HCIdata<span class="sc">$</span>total, total_scores_opt), <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.948</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(HCIdata<span class="sc">$</span>total, total_scores_opt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="project_1_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="project_1_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Now let us interpret the results of the optimal scaling procedure. Looking at the eigenvalues, we see that there the first eigenvalue (3.86) is much larger than subsequent eigenvalues (1.30, 1.22, 1.11, …). This suggests that the dataset is unidimensional. Additional dimensionality checks will be performed in a later section.</p>
-<p>Looking at the optimal scores (category scores) for each item, we see that, in general, the positive values are quite modest (~0.50 to ~1.10), while the negative values can be quite extreme (e.g.&nbsp;-4.52). This is because distractors which are selected very infrequently can have inflated scores due to having very small sample sizes for those groups.</p>
-<p>Furthermore, we see that, in general, the correct option has the most positive value. The only exception to this is item 17, in which the correct answer C is given an optimal score of 0.34, while the distractor A has a higher score of 1.00. This suggests that individuals who selected the distractor tended to do better on the other 19 items compared to individuals who selected the correct answer. This suggests that item 17 is problematic.</p>
-<p>Additionally, the correlation between the total scores using dichotomous or optimal scoring is around 0.95, which suggests that the two scoring methods agree on about 90% of the variance in how individuals are rank-ordered. This suggests that there is not much to be gained from optimal scoring.</p>
-<p><em>In conclusion, the results of the optimal scoring procedure suggests that (1) item 17 is problematic, since the distractor option A was given a higher score (1.00) than the correct answer C (0.34), (2) not much is gained from optimal scoring, since the correlation between the total scores using both scoring approaches is around 0.95, which suggests a shared variance of around 90%, and (3) the data is unidimensional, since there is one dominant eigenvalue.</em></p>
+<p>The correlation between the original total scores and the new total scores is very high (<em>r</em> = .948), which indicates that there is a strong positive linear relationship between the original total scores and the new total scores. Additionally, the squared correlation (<span class="math inline">R^2</span> = .899) indicates that, in a simple linear regression model, around 90% of the variation in the new total scores is explained by the linear relationship with the original total scores.</p>
+<p>&nbsp;</p>
+<p><em><strong>Key Takeaways</strong>: The results of the optimal scaling procedure suggest that there is not much reliability-relevant information lost by dichotomous scoring for this particular sample. The Cronbach’s alpha based on optimal scores (<span class="math inline">\alpha</span> = .77, 95% CI [.74, .79])) is only slightly larger than the Cronbach’s alpha based on dichotomous scores (<span class="math inline">\alpha</span> = .72, 95% CI [.68, .75]). Additionally, there is a strong linear relationship between the original total scores and the total scores obtained using optimal scaling (<span class="math inline">r</span> = .948, <span class="math inline">R^2</span> = .899).</em></p>
 <hr>
 </section>
 <section id="dimensionality-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="dimensionality-analysis">1.6) Dimensionality Analysis</h2>
-<p>The dimensionality of the dataset can be examined using factor analysis. Before performing factor analysis, the Kaiser-Meyer-Olkin (KMO) index is a useful measure of how well-suited a dataset is for factor analysis. Here, the KMO index is calculated using the tetrachoric correlation matrix rather than the raw item responses (Pearson correlations), which is more appropriate since the items are dichotomously scored but are hypothesized to reflect an underlying continuous attribute. In fact, using Pearson correlations results in a slightly higher KMO index, but it is not shown here.</p>
+<p>The dimensionality of the dataset can be examined using factor analysis. Before performing factor analysis, the Kaiser-Meyer-Olkin (KMO) index is a useful measure of how well-suited a dataset is for factor analysis. Here, the KMO index is calculated using the tetrachoric correlation matrix rather than the raw item responses (Pearson correlations), which is more appropriate since the items are dichotomously scored but are hypothesized to reflect an underlying continuous attribute. In fact, using Pearson correlations results in a slightly higher KMO index, but it is not shown here. The KMO index can be calculated using the <code>KMO()</code> function in the <code>{psych}</code> package.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">KMO</span>(tetra<span class="sc">$</span>rho)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Calculate the KMO index using the tetrachoric correlation matrix</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">KMO</span>(tetra<span class="sc">$</span>rho)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Kaiser-Meyer-Olkin factor adequacy
 Call: KMO(r = tetra$rho)
@@ -1072,46 +928,46 @@ QR17 QR18 QR19 QR20
 <p>The overall MSA is 0.78, which is acceptable but not particularly strong. Kaiser and Rice (1974) suggested that the overall MSA should exceed .50 as a bare minimum for a correlation matrix to be suitable for factor analysis. The overall MSA is lowered by a few items with low individual MSAs: item 17 (.40), item 7 (.62), item 4 (.63), and item 9 (.63).</p>
 <p>Next, the number of factors can be determined using parallel analysis. Parallel analysis compares the eigenvalues from the actual dataset against eigenvalues from simulated/resampled datasets of the same size. The idea is that a “real” factor should explain more variance than would be expected from chance alone.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.parallel</span>(items_scored, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.parallel</span>(items_scored, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="project_1_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="project_1_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Parallel analysis suggests that the number of factors =  7  and the number of components =  3 </code></pre>
+<pre><code>Parallel analysis suggests that the number of factors =  6  and the number of components =  3 </code></pre>
 </div>
 </div>
 <p>The parallel analysis results suggest that there are 7 factors and 3 components. PCA analyzes total variance in each variable, so PCA eigenvalues tend to be larger and drop off faster. FA analyzes only the common variance between variables, so FA eigenvalues tend to be smaller and drop off more gradually. In this case, both results suggest that the dataset may have additional structure beyond a single construct. However, the eigenvalues clearly indicate that there is one dominant factor/component which is much larger than the others. This suggests that, even though additional factors may explain a significant amount of variance, the dataset is essentially unidimensional.</p>
 <p>Next, we can fit EFA models with a different number of factors to compare their model fit. This will provide additional evidence about the dimensionality of the dataset. Since the parallel analysis suggested 3 components and 7 factors, all solutions up to 7 factors will be compared.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit EFA models</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>fit_fa_1 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">1</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>fit_fa_2 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">2</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>fit_fa_3 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">3</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>fit_fa_4 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">4</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fit_fa_5 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">5</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>fit_fa_6 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">6</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>fit_fa_7 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">7</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Create a table with fit statistics rounded to 3 decimal places</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>fit_fa_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">f1 =</span> fit_fa_1, </span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f2 =</span> fit_fa_2, </span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f3 =</span> fit_fa_3, </span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f4 =</span> fit_fa_4,</span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f5 =</span> fit_fa_5,</span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f6 =</span> fit_fa_6,</span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f7 =</span> fit_fa_7)</span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">t</span>(<span class="fu">sapply</span>(fit_fa_list, <span class="cf">function</span>(m) <span class="fu">c</span>(</span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">chisq =</span> m<span class="sc">$</span>STATISTIC,</span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">df    =</span> m<span class="sc">$</span>dof,</span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">RMSEA =</span> m<span class="sc">$</span>RMSEA[<span class="dv">1</span>],</span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">RMSR  =</span> m<span class="sc">$</span>rms,</span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">TLI   =</span> m<span class="sc">$</span>TLI,</span>
-<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">BIC   =</span> m<span class="sc">$</span>BIC</span>
-<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>      ))), <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit EFA models</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>fit_fa_1 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">1</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>fit_fa_2 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">2</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>fit_fa_3 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">3</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>fit_fa_4 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">4</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>fit_fa_5 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">5</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fit_fa_6 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">6</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>fit_fa_7 <span class="ot">&lt;-</span> <span class="fu">fa</span>(items_scored, <span class="at">nfactors =</span> <span class="dv">7</span>, <span class="at">fm =</span> <span class="st">"ml"</span>, <span class="at">cor =</span> <span class="st">"tet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Create a table with fit statistics rounded to 3 decimal places</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>fit_fa_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">f1 =</span> fit_fa_1, </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f2 =</span> fit_fa_2, </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f3 =</span> fit_fa_3, </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f4 =</span> fit_fa_4,</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f5 =</span> fit_fa_5,</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f6 =</span> fit_fa_6,</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">f7 =</span> fit_fa_7)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">t</span>(<span class="fu">sapply</span>(fit_fa_list, <span class="cf">function</span>(m) <span class="fu">c</span>(</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">chisq =</span> m<span class="sc">$</span>STATISTIC,</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">df    =</span> m<span class="sc">$</span>dof,</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">RMSEA =</span> m<span class="sc">$</span>RMSEA[<span class="dv">1</span>],</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">RMSR  =</span> m<span class="sc">$</span>rms,</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">TLI   =</span> m<span class="sc">$</span>TLI,</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">BIC   =</span> m<span class="sc">$</span>BIC</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>      ))), <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      chisq  df RMSEA.RMSEA  RMSR   TLI      BIC
 f1 1273.675 170       0.098 0.075 0.614  167.692
@@ -1125,11 +981,11 @@ f7  220.098  71       0.056 0.029 0.874 -241.813</code></pre>
 </div>
 <p>We see that the fit indices all improve monotonically as the number of factors increases, which is to be expected. Interestingly, the Bayesian Information Criterion (BIC) favors the 6-factor solution. The BIC rewards better model fit but also penalizes for increased complexity. A more negative BIC indicates a better model fit given its degree of complexity. We see that the BIC drops sharply at the beginning and continues to decrease until it hits a minimum in the 6-factor solution, before increasing again with the 7-factor solution. However, the BIC is not a perfect indicator of which solution should be retained. It’s a good idea to look at the factor loadings to see if they make sense.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_fa_6<span class="sc">$</span>loadings, <span class="at">cutoff =</span> <span class="fl">0.2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fit_fa_6<span class="sc">$</span>loadings, <span class="at">cutoff =</span> <span class="fl">0.2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Loadings:
-     ML3    ML6    ML4    ML1    ML2    ML5   
+     ML6    ML2    ML1    ML5    ML4    ML3   
 QR1   0.334         0.212                     
 QR2                                      0.948
 QR3   0.293                              0.356
@@ -1151,7 +1007,7 @@ QR18         0.963
 QR19  0.291  0.556                            
 QR20                0.250  0.444              
 
-                 ML3   ML6   ML4   ML1   ML2   ML5
+                 ML6   ML2   ML1   ML5   ML4   ML3
 SS loadings    1.620 1.505 1.214 1.300 1.191 1.182
 Proportion Var 0.081 0.075 0.061 0.065 0.060 0.059
 Cumulative Var 0.081 0.156 0.217 0.282 0.341 0.401</code></pre>
@@ -1159,7 +1015,7 @@ Cumulative Var 0.081 0.156 0.217 0.282 0.341 0.401</code></pre>
 </div>
 <p>We see that a few items load almost exclusively on a single factor: item 14 (1.000), item 13 (.973), item 18 (.963), item 2 (.948), item 9 (.866). This is not a good sign and indicates that the data does not actually support having 6 factors. A few of the factors are likely just 1-2 items which have been treated as a factor. Let’s look at the communalities for the items.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>fit_fa_6<span class="sc">$</span>communalities</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>fit_fa_6<span class="sc">$</span>communalities</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       QR1        QR2        QR3        QR4        QR5        QR6        QR7 
 0.30099260 0.89476711 0.42057334 0.29527801 0.15678732 0.39276190 0.05772399 
@@ -1178,18 +1034,18 @@ Cumulative Var 0.081 0.156 0.217 0.282 0.341 0.401</code></pre>
 <h2 class="anchored" data-anchor-id="item-response-theory-analysis">1.7) Item Response Theory Analysis</h2>
 <p>The <code>{mirt}</code> package can be used to fit 1PL (Rasch), 2PL, and 3PL IRT models.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Load mirt package</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mirt)</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit IRT models</span></span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>fit_1PL <span class="ot">&lt;-</span> <span class="fu">mirt</span>(items_scored, <span class="at">model =</span> <span class="dv">1</span>, <span class="at">itemtype =</span> <span class="st">"Rasch"</span>)</span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>fit_2PL <span class="ot">&lt;-</span> <span class="fu">mirt</span>(items_scored, <span class="at">model =</span> <span class="dv">1</span>, <span class="at">itemtype =</span> <span class="st">"2PL"</span>)</span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>fit_3PL <span class="ot">&lt;-</span> <span class="fu">mirt</span>(items_scored, <span class="at">model =</span> <span class="dv">1</span>, <span class="at">itemtype =</span> <span class="st">"3PL"</span>, </span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">technical =</span> <span class="fu">list</span>(<span class="at">NCYCLES =</span> <span class="dv">2000</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Load mirt package</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mirt)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit IRT models</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>fit_1PL <span class="ot">&lt;-</span> <span class="fu">mirt</span>(items_scored, <span class="at">model =</span> <span class="dv">1</span>, <span class="at">itemtype =</span> <span class="st">"Rasch"</span>)</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>fit_2PL <span class="ot">&lt;-</span> <span class="fu">mirt</span>(items_scored, <span class="at">model =</span> <span class="dv">1</span>, <span class="at">itemtype =</span> <span class="st">"2PL"</span>)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>fit_3PL <span class="ot">&lt;-</span> <span class="fu">mirt</span>(items_scored, <span class="at">model =</span> <span class="dv">1</span>, <span class="at">itemtype =</span> <span class="st">"3PL"</span>, </span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">technical =</span> <span class="fu">list</span>(<span class="at">NCYCLES =</span> <span class="dv">2000</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We see that the 1PL (Rasch) and 2PL models converged quickly, but that the 3PL model took a large number of iterations (1372) to converge. This may be due to an insufficient sample size (N=669) for stable parameter estimates, and may indicate that the 3PL estimation is too unstable to be used. Let us examine the 3PL estimation further by looking at the item parameters.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">coef</span>(fit_3PL, <span class="at">IRTpars =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>items, <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">coef</span>(fit_3PL, <span class="at">IRTpars =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>items, <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        a     b    g u
 QR1  1.04 -0.44 0.25 1
@@ -1217,12 +1073,12 @@ QR20 0.88 -1.19 0.02 1</code></pre>
 <p>We see that some items have implausibly high discriminations: item 10 (3.66), item 13 (4.59), and item 14 (3.34). Furthermore, we also see that some items have implausibly low guessing parameters: item 2 (.03), item 4 (.01), item 5 (.01), item 6 (.10), item 7 (.01), item 8 (.00), item 9 (.00), item 18 (.00), item 19 (.10), and item 20 (.02). Thus, the 3PL estimation is likely too unstable to be used. We will proceed with the 1PL (Rasch) and 2PL models.</p>
 <p>Next, the item parameters from the 1PL (Rasch) and 2PL models are summarized in the following table.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>IRT_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">b_1PL =</span> <span class="fu">round</span>(<span class="fu">coef</span>(fit_1PL, <span class="at">IRTpars =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>items[, <span class="st">"b"</span>], <span class="dv">2</span>),</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">b_2PL =</span> <span class="fu">round</span>(<span class="fu">coef</span>(fit_2PL, <span class="at">IRTpars =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>items[, <span class="st">"b"</span>], <span class="dv">2</span>),</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">a_2PL =</span> <span class="fu">round</span>(<span class="fu">coef</span>(fit_2PL, <span class="at">IRTpars =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>items[, <span class="st">"a"</span>], <span class="dv">2</span>)</span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>IRT_results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>IRT_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">b_1PL =</span> <span class="fu">round</span>(<span class="fu">coef</span>(fit_1PL, <span class="at">IRTpars =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>items[, <span class="st">"b"</span>], <span class="dv">2</span>),</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">b_2PL =</span> <span class="fu">round</span>(<span class="fu">coef</span>(fit_2PL, <span class="at">IRTpars =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>items[, <span class="st">"b"</span>], <span class="dv">2</span>),</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">a_2PL =</span> <span class="fu">round</span>(<span class="fu">coef</span>(fit_2PL, <span class="at">IRTpars =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>items[, <span class="st">"a"</span>], <span class="dv">2</span>)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>IRT_results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     b_1PL b_2PL a_2PL
 QR1  -0.94 -1.10  0.87
@@ -1250,7 +1106,7 @@ QR20 -1.06 -1.16  0.95</code></pre>
 <p>Notably, item 17 has a very high difficulty (b = 7.40) and a very low discrimination (a = .12) under the 2PL model. This is the most clearly problematic item.</p>
 <p>Looking at the item discriminations under the 2PL model, we see that there is a wide range of values (.12 to 1.80). Looking at the descriptive statistics below, we see that the item discriminations have a mean of .91 and a standard deviation of .42, which is a substantial amount of variation. This suggests that the equal-discrimination assumption underlying the 1PL (Rasch) model may be untenable for this dataset.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="fu">coef</span>(fit_2PL, <span class="at">IRTpars =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>items[, <span class="st">"a"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="fu">coef</span>(fit_2PL, <span class="at">IRTpars =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>items[, <span class="st">"a"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   vars  n mean   sd median trimmed  mad  min max range  skew kurtosis   se
 X1    1 20 0.91 0.42   0.93    0.91 0.34 0.12 1.8  1.67 -0.01    -0.43 0.09</code></pre>
@@ -1258,26 +1114,26 @@ X1    1 20 0.91 0.42   0.93    0.91 0.34 0.12 1.8  1.67 -0.01    -0.43 0.09</cod
 </div>
 <p>Now let us compare the fit of the 1PL (Rasch) and 2PL models. Since the models are nested, a likelihood ratio test (LRT) can be performed and relative model fit statistics can be obtained. Furthermore, absolute model fit statistics can be obtained by calculating the M2 index, which is specifically designed to compare IRT models. Additionally, item fit can be compared by calculating the S-X<span class="math inline">^2</span> statistics for each item.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Relative fit statistics</span></span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_1PL, fit_2PL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Relative fit statistics</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_1PL, fit_2PL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             AIC    SABIC       HQ      BIC    logLik      X2 df p
 fit_1PL 15754.85 15782.79 15791.50 15849.47 -7856.423             
 fit_2PL 15613.51 15666.74 15683.33 15793.75 -7766.757 179.332 19 0</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Absolute fit statistics</span></span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">M2</span>(fit_1PL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Absolute fit statistics</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">M2</span>(fit_1PL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           M2  df p RMSEA RMSEA_5 RMSEA_95 SRMSR   TLI  CFI
 stats 530.586 189 0 0.052   0.047    0.057 0.073 0.839 0.84</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">M2</span>(fit_2PL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">M2</span>(fit_2PL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          M2  df p RMSEA RMSEA_5 RMSEA_95 SRMSR   TLI   CFI
 stats 331.72 170 0 0.038   0.032    0.044 0.047 0.915 0.924</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Item fit statistics</span></span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">itemfit</span>(fit_1PL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Item fit statistics</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">itemfit</span>(fit_1PL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   item   S_X2 df.S_X2 RMSEA.S_X2 p.S_X2
 1   QR1 13.795      13      0.010  0.388
@@ -1301,7 +1157,7 @@ stats 331.72 170 0 0.038   0.032    0.044 0.047 0.915 0.924</code></pre>
 19 QR19 25.802      12      0.041  0.011
 20 QR20 10.592      13      0.000  0.645</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">itemfit</span>(fit_2PL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">itemfit</span>(fit_2PL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   item   S_X2 df.S_X2 RMSEA.S_X2 p.S_X2
 1   QR1 15.246      13      0.016  0.292
@@ -1331,7 +1187,7 @@ stats 331.72 170 0 0.038   0.032    0.044 0.047 0.915 0.924</code></pre>
 <p>In terms of item fit, a significant result (<span class="math inline">\alpha</span> = .05) in the S-X<span class="math inline">^2</span> test indicates a misfitting item. Since the S-X<span class="math inline">^2</span> test is sensitive to sample size, it is also a good idea to look at the RMSEA for an effect size measure (conventional guideline is RMSEA &lt; .05 indicates good fit). For the 1PL model, items 3, 4, 7, 9, 10, 13, 17, 18, and 19 show statistically significant misfit, and items 7 and 17 show practically significant misfit. For the 2PL model, items 10 and 13 show statistically significant misfit, and no items show practically significant misfit. Thus, the 2PL model has much better item fit than the 1PL (Rasch) model.</p>
 <p>Next, let us check how well the local independence assumptions holds under both models. This can be done using Yen’s Q3 statistic.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residuals</span>(fit_1PL, <span class="at">type =</span> <span class="st">"Q3"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residuals</span>(fit_1PL, <span class="at">type =</span> <span class="st">"Q3"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Q3 summary statistics:
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -1380,7 +1236,7 @@ QR18 -0.001 -0.151  0.077 -0.042  0.003 -0.037 -0.093  1.000  0.216 -0.009
 QR19  0.020  0.002 -0.072  0.020 -0.012 -0.010 -0.045  0.216  1.000 -0.059
 QR20 -0.056 -0.105  0.013  0.095 -0.062 -0.071 -0.078 -0.009 -0.059  1.000</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residuals</span>(fit_2PL, <span class="at">type =</span> <span class="st">"Q3"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residuals</span>(fit_2PL, <span class="at">type =</span> <span class="st">"Q3"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Q3 summary statistics:
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -1432,7 +1288,7 @@ QR20 -0.068 -0.098 -0.023  0.071 -0.065 -0.090 -0.005 -0.088 -0.107  1.000</code
 </div>
 <p>The mean Q3 for the 1PL (Rasch) and 2PL models are -.037 and -.036, respectively, which are small. Additionally, the first and third quartiles are (-.078, -.002) for the 1PL (Rasch) model and (-.075, -.001) for the 2PL model. This indicates that, for the majority of items, there are no issues with local dependence. However, the large maximum values (.216 for the 1PL model and .245 for the 2PL model) indicate that there are item pairs with substantial dependence. To find the largest entries, the <code>suppress =</code> argument can be used to remove entries below a certain magnitude. A practical guideline is that a Q3 which is 0.20 above the mean should be flagged.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residuals</span>(fit_1PL, <span class="at">type =</span> <span class="st">"Q3"</span>, <span class="at">suppress =</span> .<span class="dv">20</span> <span class="sc">-</span> .<span class="dv">037</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residuals</span>(fit_1PL, <span class="at">type =</span> <span class="st">"Q3"</span>, <span class="at">suppress =</span> .<span class="dv">20</span> <span class="sc">-</span> .<span class="dv">037</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Q3 summary statistics:
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -1481,7 +1337,7 @@ QR18      1.000 0.216
 QR19      0.216 1.000     
 QR20                     1</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residuals</span>(fit_2PL, <span class="at">type =</span> <span class="st">"Q3"</span>, <span class="at">suppress =</span> .<span class="dv">20</span> <span class="sc">-</span> .<span class="dv">036</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residuals</span>(fit_2PL, <span class="at">type =</span> <span class="st">"Q3"</span>, <span class="at">suppress =</span> .<span class="dv">20</span> <span class="sc">-</span> .<span class="dv">036</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Q3 summary statistics:
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 

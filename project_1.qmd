@@ -331,9 +331,13 @@ Unlike the Pearson correlation, the tetrachoric correlation is not computed from
 
 It is useful to report both the coefficient alpha and the ordinal alpha for two reasons. The first reason is the difference in interpretation. The coefficient alpha is an estimate of the reliability of the *total scores* and reflects the reliability of the instrument as it is operationally scored and used. The ordinal alpha is an estimate of the reliability of the *underlying continuous variables*, which reflects the theoretical reliability of the instrument if the underlying attribute is normally distributed and could be measured without information loss from the items being dichotomously scored. The second reason for reporting both estimates is that the difference between the estimates itself provides useful diagnostic information. If the ordinal alpha is not much higher than the coefficient alpha, then this suggests that there is little information loss from dichotomous scoring. Conversely, a substantial gap suggests that meaningful information is lost by dichotomous scoring.
 
+### 1.2.4) Application of Theory to the HCI
+
+Cronbach's alpha can be calculated using the `alpha()` function in the `{psych}` package. The ordinal alpha can be calculated by first calculating the tetrachoric correlations between the scored items using the `tetrachoric()` function in the `{psych}` package and then using the resulting tetrachoric correlation matrix (`$rho`) as the input to the `alpha()` function. 
+
 ```{r}
 ### Coefficient alpha using Pearson correlations
-alpha(items_scored)[c("total", "feldt")]
+alpha(items_scored, cumulative = FALSE)[c("total", "feldt")]
 
 ### Ordinal alpha using tetrachoric correlations
 tetra <- tetrachoric(items_scored)
@@ -361,7 +365,7 @@ spearman.brown(.83, .90, n.or.r = "r")
 
 &nbsp;
 
-***Key Takeaways**: The Cronbach's alpha estimate is .72 (95% CI [.68, .75]) and the ordinal alpha estimate is .83 (95% CI [.70, .92]). The internal consistency of the composite scores is not particularly strong for an instrument which attempts to measure a single construct. According to a frequently cited guideline by Nunnally (1978), a Cronbach's alpha of .70 or above is acceptable for early stages of research. However, for applied research, a Cronbach's alpha of .90 or higher is typically recommended (Lance et al., 2006). The Spearman-Brown prophecy formula predicts that a Cronbach's alpha of .90 would be achieved with 70 items and an ordinal alpha of .90 would be achieved with 37 items.*
+***Key Takeaways**: The Cronbach's alpha estimate is .72 (95% CI [.68, .75]) and the ordinal alpha estimate is .83 (95% CI [.70, .92]). The estimated reliability of the total scores for the population is not particularly strong for an instrument which attempts to measure a single construct. According to a frequently cited guideline by Nunnally (1978), a Cronbach's alpha of .70 or above is acceptable for early stages of research. However, for applied research, a Cronbach's alpha of .90 or higher is typically recommended (Lance et al., 2006). The Spearman-Brown prophecy formula predicts that a Cronbach's alpha of .90 would be achieved with 70 items and an ordinal alpha of .90 would be achieved with 37 items.*
 
 ---
 
@@ -574,7 +578,7 @@ For item 20, distractor A has a weak negative point-biserial correlation ($r_{IR
 
 ------------------------------------------------------------------------
 
-## Optimal Scaling
+## 1.5) Optimal Scaling
 
 Thus far, the items have been dichotomously scored by assigning each correct option a score of 1 and each incorrect option a score of 0. However, it is likely that some information is lost by dichotomous scoring. This is because dichotomous scoring treats each incorrect option as having equal value, which is unlikely since the distractors differ in their quality, as seen in the classical distractor analysis above. An alternative is to use *optimal scaling*, which describes a set of data-driven approaches that assign different scores to each response option by optimizing for some statistical criterion.
 
@@ -615,7 +619,7 @@ Additionally, the correlation between the total scores using dichotomous or opti
 
 ------------------------------------------------------------------------
 
-## Dimensionality Analysis
+## 1.6) Dimensionality Analysis
 
 The dimensionality of the dataset can be examined using factor analysis. Before performing factor analysis, the Kaiser-Meyer-Olkin (KMO) index is a useful measure of how well-suited a dataset is for factor analysis. Here, the KMO index is calculated using the tetrachoric correlation matrix rather than the raw item responses (Pearson correlations), which is more appropriate since the items are dichotomously scored but are hypothesized to reflect an underlying continuous attribute. In fact, using Pearson correlations results in a slightly higher KMO index, but it is not shown here.
 
@@ -686,7 +690,7 @@ Looking at the communalities for the other solutions, the 5-factor, 4-factor, 3-
 
 ------------------------------------------------------------------------
 
-## Item Response Theory Analysis
+## 1.7) Item Response Theory Analysis
 
 The `{mirt}` package can be used to fit 1PL (Rasch), 2PL, and 3PL IRT models.
 

@@ -257,12 +257,13 @@ window.Quarto = {
   <li><a href="#how-is-internal-consistency-a-measure-of-reliability" id="toc-how-is-internal-consistency-a-measure-of-reliability" class="nav-link" data-scroll-target="#how-is-internal-consistency-a-measure-of-reliability">1.2.1) How is Internal Consistency a Measure of Reliability?</a></li>
   <li><a href="#the-classical-true-score-model" id="toc-the-classical-true-score-model" class="nav-link" data-scroll-target="#the-classical-true-score-model">1.2.2) The Classical True Score Model</a></li>
   <li><a href="#the-additional-assumptions" id="toc-the-additional-assumptions" class="nav-link" data-scroll-target="#the-additional-assumptions">1.2.3) The Additional Assumptions</a></li>
+  <li><a href="#application-of-theory-to-the-hci" id="toc-application-of-theory-to-the-hci" class="nav-link" data-scroll-target="#application-of-theory-to-the-hci">1.2.4) Application of Theory to the HCI</a></li>
   </ul></li>
   <li><a href="#classical-item-analysis" id="toc-classical-item-analysis" class="nav-link" data-scroll-target="#classical-item-analysis">1.3) Classical Item Analysis</a></li>
   <li><a href="#classical-distractor-analysis" id="toc-classical-distractor-analysis" class="nav-link" data-scroll-target="#classical-distractor-analysis">1.4) Classical Distractor Analysis</a></li>
-  <li><a href="#optimal-scaling" id="toc-optimal-scaling" class="nav-link" data-scroll-target="#optimal-scaling">Optimal Scaling</a></li>
-  <li><a href="#dimensionality-analysis" id="toc-dimensionality-analysis" class="nav-link" data-scroll-target="#dimensionality-analysis">Dimensionality Analysis</a></li>
-  <li><a href="#item-response-theory-analysis" id="toc-item-response-theory-analysis" class="nav-link" data-scroll-target="#item-response-theory-analysis">Item Response Theory Analysis</a></li>
+  <li><a href="#optimal-scaling" id="toc-optimal-scaling" class="nav-link" data-scroll-target="#optimal-scaling">1.5) Optimal Scaling</a></li>
+  <li><a href="#dimensionality-analysis" id="toc-dimensionality-analysis" class="nav-link" data-scroll-target="#dimensionality-analysis">1.6) Dimensionality Analysis</a></li>
+  <li><a href="#item-response-theory-analysis" id="toc-item-response-theory-analysis" class="nav-link" data-scroll-target="#item-response-theory-analysis">1.7) Item Response Theory Analysis</a></li>
   <li><a href="#appendices" id="toc-appendices" class="nav-link" data-scroll-target="#appendices">Appendices</a>
   <ul class="collapse">
   <li><a href="#appendix-a-proof-of-cronbachs-alpha-as-a-lower-bound-for-reliability-under-the-assumptions-of-congeneric-items" id="toc-appendix-a-proof-of-cronbachs-alpha-as-a-lower-bound-for-reliability-under-the-assumptions-of-congeneric-items" class="nav-link" data-scroll-target="#appendix-a-proof-of-cronbachs-alpha-as-a-lower-bound-for-reliability-under-the-assumptions-of-congeneric-items">Appendix A: Proof of Cronbach’s Alpha as a Lower Bound for Reliability Under the Assumptions of Congeneric Items</a></li>
@@ -460,9 +461,13 @@ X1    1 669 12.13 3.65     12   12.22 4.45   3  20    17 -0.17    -0.68 0.14</co
 <p>For the HCI, the item responses are hypothesized to reflect an underlying continuous variable (understanding of homeostasis), but the item responses have had an artificial structure imposed on them via dichotomous scoring. Thus, the assumption of continuous variables is violated, and Cronbach’s alpha likely underestimates the true internal consistency of the instrument. The ordinal alpha based on tetrachoric correlations may be more appropriate here.</p>
 <p>Unlike the Pearson correlation, the tetrachoric correlation is not computed from the paired values directly. Rather, the tetrachoric correlation assumes that there is a normally distributed latent variable underlying each item. For each pair of items, the tetrachoric correlation is estimated from the observed 2×2 frequency table using the method of maximum likelihood. Thus, the tetrachoric correlation is itself a model which depends on assumptions.</p>
 <p>It is useful to report both the coefficient alpha and the ordinal alpha for two reasons. The first reason is the difference in interpretation. The coefficient alpha is an estimate of the reliability of the <em>total scores</em> and reflects the reliability of the instrument as it is operationally scored and used. The ordinal alpha is an estimate of the reliability of the <em>underlying continuous variables</em>, which reflects the theoretical reliability of the instrument if the underlying attribute is normally distributed and could be measured without information loss from the items being dichotomously scored. The second reason for reporting both estimates is that the difference between the estimates itself provides useful diagnostic information. If the ordinal alpha is not much higher than the coefficient alpha, then this suggests that there is little information loss from dichotomous scoring. Conversely, a substantial gap suggests that meaningful information is lost by dichotomous scoring.</p>
+</section>
+<section id="application-of-theory-to-the-hci" class="level3">
+<h3 class="anchored" data-anchor-id="application-of-theory-to-the-hci">1.2.4) Application of Theory to the HCI</h3>
+<p>Cronbach’s alpha can be calculated using the <code>alpha()</code> function in the <code>{psych}</code> package. The ordinal alpha can be calculated by first calculating the tetrachoric correlations between the scored items using the <code>tetrachoric()</code> function in the <code>{psych}</code> package and then using the resulting tetrachoric correlation matrix (<code>$rho</code>) as the input to the <code>alpha()</code> function.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Coefficient alpha using Pearson correlations</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(items_scored)[<span class="fu">c</span>(<span class="st">"total"</span>, <span class="st">"feldt"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(items_scored, <span class="at">cumulative =</span> <span class="cn">FALSE</span>)[<span class="fu">c</span>(<span class="st">"total"</span>, <span class="st">"feldt"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$total
  raw_alpha std.alpha   G6(smc) average_r      S/N       ase      mean        sd
@@ -512,7 +517,7 @@ $feldt
 </div>
 </div>
 <p>&nbsp;</p>
-<p><em><strong>Key Takeaways</strong>: The Cronbach’s alpha estimate is .72 (95% CI [.68, .75]) and the ordinal alpha estimate is .83 (95% CI [.70, .92]). The internal consistency of the composite scores is not particularly strong for an instrument which attempts to measure a single construct. According to a frequently cited guideline by Nunnally (1978), a Cronbach’s alpha of .70 or above is acceptable for early stages of research. However, for applied research, a Cronbach’s alpha of .90 or higher is typically recommended (Lance et al., 2006). The Spearman-Brown prophecy formula predicts that a Cronbach’s alpha of .90 would be achieved with 70 items and an ordinal alpha of .90 would be achieved with 37 items.</em></p>
+<p><em><strong>Key Takeaways</strong>: The Cronbach’s alpha estimate is .72 (95% CI [.68, .75]) and the ordinal alpha estimate is .83 (95% CI [.70, .92]). The estimated reliability of the total scores for the population is not particularly strong for an instrument which attempts to measure a single construct. According to a frequently cited guideline by Nunnally (1978), a Cronbach’s alpha of .70 or above is acceptable for early stages of research. However, for applied research, a Cronbach’s alpha of .90 or higher is typically recommended (Lance et al., 2006). The Spearman-Brown prophecy formula predicts that a Cronbach’s alpha of .90 would be achieved with 70 items and an ordinal alpha of .90 would be achieved with 37 items.</em></p>
 <hr>
 </section>
 </section>
@@ -868,7 +873,7 @@ D       *   D 480 0.72  0.34    0.46  0.48  0.74  0.84  0.94</code></pre>
 <hr>
 </section>
 <section id="optimal-scaling" class="level2">
-<h2 class="anchored" data-anchor-id="optimal-scaling">Optimal Scaling</h2>
+<h2 class="anchored" data-anchor-id="optimal-scaling">1.5) Optimal Scaling</h2>
 <p>Thus far, the items have been dichotomously scored by assigning each correct option a score of 1 and each incorrect option a score of 0. However, it is likely that some information is lost by dichotomous scoring. This is because dichotomous scoring treats each incorrect option as having equal value, which is unlikely since the distractors differ in their quality, as seen in the classical distractor analysis above. An alternative is to use <em>optimal scaling</em>, which describes a set of data-driven approaches that assign different scores to each response option by optimizing for some statistical criterion.</p>
 <p>A common statistical criterion is to choose scores which maximize the sum of item correlations (the entries in the item correlation matrix). This is equivalent to maximizing the coefficient alpha of the instrument. The <code>corAspect()</code> function in the <code>{aspect}</code> package (Mair &amp; de Leeuw, 2010) can be used to perform optimal scaling. By default, the <code>corAspect()</code> function optimizes for the sum of item correlations (<code>aspect = "aspectSum"</code>) and assumes that the variables are nominal (<code>level = "nominal"</code>).</p>
 <div class="cell">
@@ -1049,7 +1054,7 @@ D  0.56</code></pre>
 <hr>
 </section>
 <section id="dimensionality-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="dimensionality-analysis">Dimensionality Analysis</h2>
+<h2 class="anchored" data-anchor-id="dimensionality-analysis">1.6) Dimensionality Analysis</h2>
 <p>The dimensionality of the dataset can be examined using factor analysis. Before performing factor analysis, the Kaiser-Meyer-Olkin (KMO) index is a useful measure of how well-suited a dataset is for factor analysis. Here, the KMO index is calculated using the tetrachoric correlation matrix rather than the raw item responses (Pearson correlations), which is more appropriate since the items are dichotomously scored but are hypothesized to reflect an underlying continuous attribute. In fact, using Pearson correlations results in a slightly higher KMO index, but it is not shown here.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">KMO</span>(tetra<span class="sc">$</span>rho)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1124,7 +1129,7 @@ f7  220.098  71       0.056 0.029 0.874 -241.813</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Loadings:
-     ML5    ML1    ML4    ML2    ML6    ML3   
+     ML3    ML6    ML4    ML1    ML2    ML5   
 QR1   0.334         0.212                     
 QR2                                      0.948
 QR3   0.293                              0.356
@@ -1146,7 +1151,7 @@ QR18         0.963
 QR19  0.291  0.556                            
 QR20                0.250  0.444              
 
-                 ML5   ML1   ML4   ML2   ML6   ML3
+                 ML3   ML6   ML4   ML1   ML2   ML5
 SS loadings    1.620 1.505 1.214 1.300 1.191 1.182
 Proportion Var 0.081 0.075 0.061 0.065 0.060 0.059
 Cumulative Var 0.081 0.156 0.217 0.282 0.341 0.401</code></pre>
@@ -1170,7 +1175,7 @@ Cumulative Var 0.081 0.156 0.217 0.282 0.341 0.401</code></pre>
 <hr>
 </section>
 <section id="item-response-theory-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="item-response-theory-analysis">Item Response Theory Analysis</h2>
+<h2 class="anchored" data-anchor-id="item-response-theory-analysis">1.7) Item Response Theory Analysis</h2>
 <p>The <code>{mirt}</code> package can be used to fit 1PL (Rasch), 2PL, and 3PL IRT models.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Load mirt package</span></span>

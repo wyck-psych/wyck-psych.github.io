@@ -582,6 +582,8 @@ For item 20, distractor A has a weak negative point-biserial correlation ($r_{IR
 
 ## 1.5) Optimal Scaling
 
+Before moving on to item response theory (IRT) models, it's a good idea to examine (1) whether dichotomous scoring is appropriate, and (2) the dimensionality of the dataset. 
+
 Thus far, the items have been dichotomously scored by assigning each correct option a score of 1 and each incorrect option a score of 0. However, it is likely that some information is lost by dichotomous scoring. This is because dichotomous scoring treats each incorrect option as having equal value, which is unlikely since the distractors differ in their quality, as seen in the classical distractor analysis above. Additionally, the difference in the point estimates for Cronbach's alpha and ordinal alpha is consistent with there being some amount of information loss from dichotomous scoring. An alternative is to use *optimal scaling*, which describes a set of data-driven approaches that assign different scores to each response option by optimizing for some statistical criterion.
 
 A common statistical criterion is to choose scores which maximize the sum of item correlations (the entries in the item correlation matrix). This is equivalent to maximizing the coefficient alpha of the instrument. The `corAspect()` function in the `{aspect}` package (Mair & de Leeuw, 2010) can be used to perform optimal scaling. By default, the `corAspect()` function optimizes for the sum of item correlations (`aspect = "aspectSum"`) and assumes that the variables are nominal (`level = "nominal"`).
@@ -629,36 +631,81 @@ The correlation between the original total scores and the new total scores is ve
 
 ## 1.6) Dimensionality Analysis
 
-The dimensionality of the dataset can be examined using factor analysis. Before performing factor analysis, the Kaiser-Meyer-Olkin (KMO) index is a useful measure of how well-suited a dataset is for factor analysis. Here, the KMO index is calculated using the tetrachoric correlation matrix rather than the raw item responses (Pearson correlations), which is more appropriate since the items are dichotomously scored but are hypothesized to reflect an underlying continuous attribute. In fact, using Pearson correlations results in a slightly higher KMO index, but it is not shown here. The KMO index can be calculated using the `KMO()` function in the `{psych}` package. 
+The dimensionality of the dataset can be examined by performing exploratory factor analysis on the tetrachoric correlation matrix. Before performing factor analysis, it's helpful to examine the data to see how suitable it is. This can be done by (1) examining the correlation matrix using a heatmap, (2) the Kaiser-Meyer-Olkin (KMO) index, and (3) Bartlett's test of sphericity. 
+
+First, a heatmap of the tetrachoric correlation matrix will provide an overall picture of the correlations between items and help us identify clusters of large correlations. The `{corrplot}` package provides many helpful tools for creating heatmaps on correlation matrices. 
+
+```{r}
+## Load the required package
+library(corrplot)
+
+## Create the heatmap using the tetrachoric correlation matrix
+corrplot(tetra$rho,
+         method = "color",
+         order = "AOE", 
+         type = "lower",
+         diag = FALSE)
+```
+
+The items have been ordered so that clusters of correlations are more visually clear using the "angular order of eigenvectors" (`order = "AOE"`) method. From the heatmap, we see that the correlations are almost all positive and small in magnitude. Additionally, there appears to be a cluster of near zero correlations on the left. These include item 17, item 4, item 9, and item 7, which appear to not correlate with most of the other items. 
+
+Furthermore, item 4, item 9, and item 20 seem to form a cluster at the top left. Examining the stems for these items reveals that the items test the same basic principle, which is that a homeostatic mechanism is always functioning, rather than being on or off. Item 4 is a conceptual version, while item 9 and item 20 are applied versions of this principle. These three items are the only items which test this principle, so this is evidence that these items could tap into an underlying factor. 
+
+Additionally, there appears to be an especially large correlation between item 18 and item 19 ($r$ = .593). This may suggest that there is local dependence between these items. This is a problem for factor analysis, since a pair of dependent items can be treated as a factor in solutions with a larger number of factors. Examining the item stems confirms the dependence: 
+
+![Items 18 and 19 from the HCI](item18_item19.png)
+
+We see that both items involve information from sensory receptors going to control centers called integrators in homeostatic systems. The issue is that the stem for item 19 essentially states the answer for item 18. A test-taker who is unsure of how to answer item 18 can read the stem for item 19 and see that information from sensory receptors is sent to the integrators. Thus, we may want to consider omitting one of these items from the factor analysis. 
+
+Lastly, examining the stem for item 17 reveals that it requires a unique kind of reasoning which is not tested by any other items. Item 17 involves a scenario in which one of the components of the homeostatic mechanism is damaged (receptor nerves are cut so the signal does not reach the control center) and requires the test-taker to make an inference about the resulting functioning of the mechanism. This may explain the low correlations between item 17 and the rest of the items in the HCI.
+
+Next, the information found in the tetrachoric correlation matrix can be summarized using the KMO index, which represents the proportion of variance between the variables which may be attributable to common variance. 
 
 ```{r}
 ## Calculate the KMO index using the tetrachoric correlation matrix
 KMO(tetra$rho)
 ```
 
-The overall MSA is 0.78, which is acceptable but not particularly strong. Kaiser and Rice (1974) suggested that the overall MSA should exceed .50 as a bare minimum for a correlation matrix to be suitable for factor analysis. The overall MSA is lowered by a few items with low individual MSAs: item 17 (.40), item 7 (.62), item 4 (.63), and item 9 (.63).
+The overall MSA is 0.78, which is acceptable but not particularly strong. Kaiser (1974) provided the following guidelines: > .90 is marvelous, .80 to .90 is meritorious, .70 to .80 is average, .60 to .70 is mediocre, .50 to .60 is terrible, and < .50 is unacceptable. Based on Kaiser's guidelines, the overall MSA is average, and is lowered by a few items with low individual MSAs: item 17 (MSA = .40), item 7 (MSA = .62), item 4 (MSA = .63), and item 9 (MSA = .63). These are the same items that appeared to not correlate with most of the other items in the heatmap. 
+
+Next, Bartlett's test of sphericity can be used to test the hypothesis that the correlation matrix is an identity matrix. Bartlett's test can be performed using the `cortest.bartlett()` function in the `{psych}` package. 
+
+```{r}
+## Perform Bartlett's test of sphericity
+cortest.bartlett(tetra$rho, n = nrow(items_scored))
+```
+
+Bartlett's test is significant, which indicates that the tetrachoric correlation matrix differs significantly from an identity matrix. However, Bartlett's test tends to always be significant as the number of variables and the sample size increases, since it becomes increasingly unlikely that every single correlation is equal to that of the identity matrix, which is what is being tested. Thus, Bartlett's test is not particularly useful here. 
+
+The results of the preliminary analyses suggest that factor analysis can be performed, but we should not expect great results. The items will likely not factor cleanly and it will be difficult to decide which factor solutions are correct. If this is the case, we may want to consider performing factor analysis with a few problematic items omitted. The most principled items to omit are:
+
+- Item 17: unacceptable MSA (.40), item stem suggests that it requires a unique skill.
+- Item 19: part of dependent item pair (items 18 and 19; item 18 is retained as it has better discrimination). 
+- Item 7: mediocre MSA (.62), item stem suggests that it requires a unique skill. 
 
 Next, the number of factors can be determined using parallel analysis. Parallel analysis compares the eigenvalues from the actual dataset against eigenvalues from simulated/resampled datasets of the same size. The idea is that a "real" factor should explain more variance than would be expected from chance alone.
 
 ```{r}
 #| fig-height: 8
 
+## Perform parallel analysis
+set.seed(1234)
 fa.parallel(items_scored, fm = "ml", cor = "tet")
 ```
 
-The parallel analysis results suggest that there are 7 factors and 3 components. PCA analyzes total variance in each variable, so PCA eigenvalues tend to be larger and drop off faster. FA analyzes only the common variance between variables, so FA eigenvalues tend to be smaller and drop off more gradually. In this case, both results suggest that the dataset may have additional structure beyond a single construct. However, the eigenvalues clearly indicate that there is one dominant factor/component which is much larger than the others. This suggests that, even though additional factors may explain a significant amount of variance, the dataset is essentially unidimensional.
+Principal components analysis (PCA) analyzes total variance in each variable, so PCA eigenvalues tend to be larger and drop off faster. Factor analysis (FA) analyzes only the common variance between variables, so FA eigenvalues tend to be smaller and drop off more gradually. In this case, both results suggest that the dataset may have additional structure beyond a single construct. However, the eigenvalues also indicate that there is one dominant factor/component which is much larger than the others. This suggests that, although additional factors may explain a significant amount of variance, the dataset is essentially unidimensional.
 
-Next, we can fit EFA models with a different number of factors to compare their model fit. This will provide additional evidence about the dimensionality of the dataset. Since the parallel analysis suggested 3 components and 7 factors, all solutions up to 7 factors will be compared.
+Next, we can fit EFA models with a different number of factors to compare their model fit. Since the parallel analysis suggested 7 factors, all solutions up to 7 factors will be compared. Since EFA is being performed using tetrachoric correlations, unweighted least squares (`fm = "uls"`) will be used instead of maximum likelihood estimation. 
 
 ```{r}
 ## Fit EFA models
-fit_fa_1 <- fa(items_scored, nfactors = 1, fm = "ml", cor = "tet")
-fit_fa_2 <- fa(items_scored, nfactors = 2, fm = "ml", cor = "tet")
-fit_fa_3 <- fa(items_scored, nfactors = 3, fm = "ml", cor = "tet")
-fit_fa_4 <- fa(items_scored, nfactors = 4, fm = "ml", cor = "tet")
-fit_fa_5 <- fa(items_scored, nfactors = 5, fm = "ml", cor = "tet")
-fit_fa_6 <- fa(items_scored, nfactors = 6, fm = "ml", cor = "tet")
-fit_fa_7 <- fa(items_scored, nfactors = 7, fm = "ml", cor = "tet")
+fit_fa_1 <- fa(items_scored, nfactors = 1, fm = "uls", cor = "tet")
+fit_fa_2 <- fa(items_scored, nfactors = 2, fm = "uls", cor = "tet")
+fit_fa_3 <- fa(items_scored, nfactors = 3, fm = "uls", cor = "tet")
+fit_fa_4 <- fa(items_scored, nfactors = 4, fm = "uls", cor = "tet")
+fit_fa_5 <- fa(items_scored, nfactors = 5, fm = "uls", cor = "tet")
+fit_fa_6 <- fa(items_scored, nfactors = 6, fm = "uls", cor = "tet")
+fit_fa_7 <- fa(items_scored, nfactors = 7, fm = "uls", cor = "tet")
 
 ## Create a table with fit statistics rounded to 3 decimal places
 fit_fa_list <- list(f1 = fit_fa_1, 
@@ -671,6 +718,7 @@ fit_fa_list <- list(f1 = fit_fa_1,
 
 round(t(sapply(fit_fa_list, function(m) c(
       chisq = m$STATISTIC,
+      pval  = m$PVAL,
       df    = m$dof,
       RMSEA = m$RMSEA[1],
       RMSR  = m$rms,
@@ -679,27 +727,70 @@ round(t(sapply(fit_fa_list, function(m) c(
       ))), 3)
 ```
 
-We see that the fit indices all improve monotonically as the number of factors increases, which is to be expected. Interestingly, the Bayesian Information Criterion (BIC) favors the 6-factor solution. The BIC rewards better model fit but also penalizes for increased complexity. A more negative BIC indicates a better model fit given its degree of complexity. We see that the BIC drops sharply at the beginning and continues to decrease until it hits a minimum in the 6-factor solution, before increasing again with the 7-factor solution. However, the BIC is not a perfect indicator of which solution should be retained. It's a good idea to look at the factor loadings to see if they make sense.
+We see that the fit indices all improve monotonically as the number of factors increases, which is to be expected. Interestingly, the Bayesian Information Criterion (BIC) favors the 6-factor solution. The BIC rewards better model fit but also penalizes for increased complexity. A more negative BIC indicates a better model fit given its degree of complexity. We see that the BIC drops sharply at the beginning and continues to decrease until it hits a minimum in the 6-factor solution, before increasing again with the 7-factor solution. However, the BIC is not a perfect indicator of which solution should be retained. It's a good idea to look at the communalities to see if they make sense.
 
 ```{r}
-print(fit_fa_6$loadings, cutoff = 0.2)
+## Create table with communalities for each factor solution
+comm_table <- round(as.data.frame(
+                     sapply(fit_fa_list, function(x) x$communalities)), 3)
+comm_table
 ```
 
-We see that a few items load almost exclusively on a single factor: item 14 (1.000), item 13 (.973), item 18 (.963), item 2 (.948), item 9 (.866). This is not a good sign and indicates that the data does not actually support having 6 factors. A few of the factors are likely just 1-2 items which have been treated as a factor. Let's look at the communalities for the items.
+For the 6-factor solution, we see that item 14 is a *Heywood case* as it has a communality equal to exactly .995. A Heywood case occurs when a variable has a communality greater than 1, which should be impossible. The `fa()` function in the `{psych}` package caps the communality at .995 to avoid a value greater than 1. We also see that item 17 ($h^2$ = .041) and item 7 ($h^2$ = .087) have very low communalities. Thus, the 6-factor solution is almost certainly incorrect, and the data do not support there being 6 factors. 
+
+The other factor solutions do not contain Heywood cases. However, a clear pattern emerges: item 17 and item 7 have very low communalities in all of those solutions. This is consistent with item 17 and item 7 having the lowest MSAs when we calculated the KMO index. 
+
+Thus, it might be helpful to refit the EFA models with the problematic items mentioned earlier (item 17, item 19, item 7) omitted. 
 
 ```{r}
-fit_fa_6$communalities
+## Create a new data object with item 17 and item 7 removed
+items_scored_omit <- items_scored[, -c(7, 17, 19)]
+
+## Fit new EFA models
+fit_fa_1_omit <- fa(items_scored_omit, nfactors = 1, fm = "uls", cor = "tet")
+fit_fa_2_omit <- fa(items_scored_omit, nfactors = 2, fm = "uls", cor = "tet")
+fit_fa_3_omit <- fa(items_scored_omit, nfactors = 3, fm = "uls", cor = "tet")
+fit_fa_4_omit <- fa(items_scored_omit, nfactors = 4, fm = "uls", cor = "tet")
+fit_fa_5_omit <- fa(items_scored_omit, nfactors = 5, fm = "uls", cor = "tet")
+fit_fa_6_omit <- fa(items_scored_omit, nfactors = 6, fm = "uls", cor = "tet")
+fit_fa_7_omit <- fa(items_scored_omit, nfactors = 7, fm = "uls", cor = "tet")
+
+## Create a table with fit statistics rounded to 3 decimal places
+fit_fa_list_omit <- list(f1 = fit_fa_1_omit, 
+                         f2 = fit_fa_2_omit, 
+                         f3 = fit_fa_3_omit, 
+                         f4 = fit_fa_4_omit,
+                         f5 = fit_fa_5_omit,
+                         f6 = fit_fa_6_omit,
+                         f7 = fit_fa_7_omit)
+
+round(t(sapply(fit_fa_list_omit, function(m) c(
+      chisq = m$STATISTIC,
+      pval  = m$PVAL,
+      df    = m$dof,
+      RMSEA = m$RMSEA[1],
+      RMSR  = m$rms,
+      TLI   = m$TLI,
+      BIC   = m$BIC
+      ))), 3)
 ```
 
-We see that a few items (13, 14, and 18) have communalities equal to exactly .995. These are likely *Heywood cases*, in which a communality reaches or exceeds 1.0. The `{psych}` package caps it at .995 to prevent it from actually exceeding 1.0, which would be an impossible value. Additionally, we see that some items have extremely low communalities: item 7 (.058) and item 17 (.041). Thus, the 6-factor solution is almost certainly incorrect.
+Again, the fit statistics improve monotonically as the number of factors increases, which is to be expected, and the BIC favors the 6-factor solution. Now let's examine the communalities:
 
-Looking at the communalities for the other solutions, the 5-factor, 4-factor, 3-factor, and 2-factor solutions all contain at least 1 Heywood case. The 1-factor solution is also problematic, as some items have extremely low communalities: item 4 (.043), item 7 (.024), item 9 (.082), and item 17 (.003). These items are the same ones that had a low MSA when calculating the KMO index.
+```{r}
+## Create table with communalities for each factor solution
+comm_table_omit <- round(as.data.frame(
+                     sapply(fit_fa_list_omit, function(x) x$communalities)), 3)
+comm_table_omit
+```
 
-*In conclusion, the dimensionality of the instrument is inconclusive. EFA solutions with 1 to 7 factors were compared. The fit statistics improved monotonically as the number of factors increased and the BIC favored the 6-factor solution. However, examination of the factor loadings and communalities indicated that all solutions except for the 1-factor solution contained Heywood cases. Additionally, a few items (4, 7, 9, and 17) were consistently found to have extremely low communalities. This suggests that these items are problematic and may need to be removed before dimensionality can be accurately assessed. However, for the purposes of subsequent IRT analyses, the dataset may be treated as essentially unidimensional, since there is one clearly dominant factor.*
+
+
+TBD
 
 ------------------------------------------------------------------------
 
-## 1.7) Item Response Theory Analysis
+## 1.7) Item Response Theory Models
 
 The `{mirt}` package can be used to fit 1PL (Rasch), 2PL, and 3PL IRT models.
 
@@ -716,13 +807,13 @@ fit_3PL <- mirt(items_scored, model = 1, itemtype = "3PL",
                   technical = list(NCYCLES = 2000))
 ```
 
-We see that the 1PL (Rasch) and 2PL models converged quickly, but that the 3PL model took a large number of iterations (1372) to converge. This may be due to an insufficient sample size (N=669) for stable parameter estimates, and may indicate that the 3PL estimation is too unstable to be used. Let us examine the 3PL estimation further by looking at the item parameters.
+We see that the 1PL (Rasch) and 2PL models converged quickly, but that the 3PL model took a large number of iterations (1372) to converge. This may be due to a combination of insufficient sample size (N=669) and insufficient variability in the item responses for stable parameter estimates, and may indicate that the 3PL estimation is too unstable to be used. Let us examine the 3PL estimation further by looking at the item parameters.
 
 ```{r}
 round(coef(fit_3PL, IRTpars = TRUE, simplify = TRUE)$items, 2)
 ```
 
-We see that some items have implausibly high discriminations: item 10 (3.66), item 13 (4.59), and item 14 (3.34). Furthermore, we also see that some items have implausibly low guessing parameters: item 2 (.03), item 4 (.01), item 5 (.01), item 6 (.10), item 7 (.01), item 8 (.00), item 9 (.00), item 18 (.00), item 19 (.10), and item 20 (.02). Thus, the 3PL estimation is likely too unstable to be used. We will proceed with the 1PL (Rasch) and 2PL models.
+We see that some items have implausibly high discriminations: item 10 ($a$ = 3.66), item 13 ($a$ = 4.59), and item 14 ($a$ = 3.34). Furthermore, we also see that some items have implausibly low guessing parameters: item 2 ($c$ = .03), item 4 ($c$ = .01), item 5 ($c$ = .01), item 6 ($c$ = .10), item 7 ($c$ = .01), item 8 ($c$ = .00), item 9 ($c$ = .00), item 18 ($c$ = .00), item 19 ($c$ = .10), and item 20 ($c$ = .02). Thus, the 3PL estimation is likely too unstable to be used. We will proceed with the 1PL (Rasch) and 2PL models.
 
 Next, the item parameters from the 1PL (Rasch) and 2PL models are summarized in the following table.
 
@@ -779,6 +870,81 @@ residuals(fit_2PL, type = "Q3", suppress = .20 - .036)
 ```
 
 For the 1PL model, we see that there is substantial dependence between item 4 and item 9, as well as between item 18 and item 19. For the 2PL model, we see that there is substantial dependence between item 4 and item 9, as well as between item 9 and item 20. The item stems for these item pairs may be worth examining for local dependence.
+
+TBD
+
+---
+
+## 1.8) Distractor Analysis using the Nominal Response Model
+
+The nominal response model (NRM) (Bock, 1972) is an IRT model which is designed for unordered categorical response data. The `mirt()` function in the `{mirt}` package can be used to fit the NRM. The `mirt()` function takes only numeric or integer values as input. Since the unscored item responses are currently stored as factors with factor levels (e.g. "A", "B", "C", ...), they need to be relabeled as integers (e.g. "1", "2", "3", ...).
+
+```{r}
+## Relabel the unscored item responses with integer labels
+items_unscored_int <- data.frame(lapply(items_unscored, 
+                                        function(x) as.integer(x)))
+
+## Examine the relabeled data
+head(items_unscored_int)
+sapply(items_unscored_int, function(x) sort(unique(x)))
+```
+
+Comparing the two objects `items_unscored` and `items_unscored_int`, we see that the unscored item variables have been successfully converted to integers, with "1" replacing "A" and so on. Now the NRM can be fit to the data. 
+
+```{r}
+## Fit the NRM to the data
+fit_nrm <- mirt(items_unscored_int, 
+                model = 1, 
+                itemtype = "nominal", 
+                SE = TRUE)
+```
+
+The coefficients and the category characteristic curves (CCCs) can now be obtained. For convenience, the CCCs are combined into a single multi-panel figure. 
+
+```{r}
+#| fig-height: 8
+#| out-width: "125%"
+
+## Coefficients of the fitted NRM
+coef(fit_nrm, IRTpars = TRUE, simplify = TRUE)
+
+## Category characteristic curves (CCCs)
+plot(fit_nrm, 
+     type = "trace",
+     layout = c(4, 5),
+     as.table = TRUE,
+     par.settings = list(
+       superpose.line = list(col = c("red", "green", "cyan", "blue", "magenta"),
+                             lwd = 1.5)))
+```
+
+Additionally, the item and test information curves can be plotted:
+
+```{r}
+#| fig-height: 9
+#| out-width: "125%"
+
+## Item information curves
+plot(fit_nrm, type = "infotrace",
+     layout = c(4, 5),
+     as.table = TRUE)
+```
+
+```{r}
+## Test information curve
+plot(fit_nrm, type = "info")
+
+## Standard error of measurement curve
+plot(fit_nrm, type = "SE")
+```
+
+From the item information curves, we see that item 17 and item 7 appear to provide essentially no information. Additionally, item 4, item 9, and item 18 appear to be the most informative items. From the test information curves, we see that the curve peaks around $\theta$ = -2, indicating that the instrument provides the most information for individuals with a below average ability level and provides little information for individuals with above average ability. This is consistent with the standard error of measurement curve, in which individuals with an above average ability level have a much larger SEM. 
+
+---
+
+## 1.9) Differential Item Functioning
+
+TBD
 
 ---
 
